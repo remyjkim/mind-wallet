@@ -4,6 +4,8 @@
 export type * from './types/index.js';
 export { OwsWalletAdapter } from './wallet/ows.js';
 export type { OwsAdapterConfig } from './wallet/ows.js';
+export { PrivateKeyWalletAdapter } from './wallet/private-key.js';
+export type { PrivateKeyAdapterConfig } from './wallet/private-key.js';
 export { createMemoryStore } from './state/memory.js';
 export { createPolicyEngine } from './policy/evaluator.js';
 export { createRouter } from './router.js';
