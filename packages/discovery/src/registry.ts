@@ -31,7 +31,7 @@ export async function searchRegistry(
   options: RegistrySearchOptions = {},
   fetchImpl: typeof globalThis.fetch = globalThis.fetch,
 ): Promise<OriginRecord[]> {
-  const base = options.registryUrl ?? DEFAULT_REGISTRY;
+  const base = options.registryUrl ?? process.env['MINDWALLET_REGISTRY_URL'] ?? DEFAULT_REGISTRY;
   const params = new URLSearchParams();
   if (options.protocol) params.set('protocol', options.protocol);
   if (options.query) params.set('q', options.query);
