@@ -15,8 +15,11 @@
     "check": "pnpm typecheck && pnpm build && pnpm test"
   },
   "devDependencies": {
-    "typescript": "workspace:*",
-    "tsup": "workspace:*",
-    "vitest": "workspace:*"
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  },
+  "dependencies": {
+    "@open-wallet-standard/core": "^1.0.0"
   }
 }

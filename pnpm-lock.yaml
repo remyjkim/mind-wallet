@@ -41,6 +41,10 @@ importers:
         version: 1.6.1
 
   packages/core:
+    dependencies:
+      '@open-wallet-standard/core':
+        specifier: ^1.0.0
+        version: 1.0.0
     devDependencies:
       tsup:
         specifier: ^8.0.0
@@ -396,6 +400,30 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@open-wallet-standard/core-darwin-arm64@1.0.0':
+    resolution: {integrity: sha512-2mr22VTm+IQ0w1RKyMCY4BHX3+eb+kAOSYbIQrGm30n1ZLIYhcoAo1HiZfa2raSyPVlIpsEsnHs/w1VrA3Fuxw==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@open-wallet-standard/core-darwin-x64@1.0.0':
+    resolution: {integrity: sha512-s4Dvu3HxYSTEubUAYsYUNyP2WDzqbEE0C0v/NhP3c48wPq5UKe3JG83aQpZU7Hdxn1rcCNf0TPkuirik74xGtg==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@open-wallet-standard/core-linux-arm64-gnu@1.0.0':
+    resolution: {integrity: sha512-cdFXgSigycW+lh0orfo12cXZIkiZZ3R2XUVaXrJOn8m6wgaa1bk7kyEIHVQCToRPHqFUm76XxX7CLLmji2kflA==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@open-wallet-standard/core-linux-x64-gnu@1.0.0':
+    resolution: {integrity: sha512-8bSkyiIlFSm1SVcbEN1YiSQLvSQMGldJqbCxBlWrMW7esSwXksshIdZ6Jstd3lzrdSSwvU+qFqtzP3Cfa7PZ3g==}
+    cpu: [x64]
+    os: [linux]
+
+  '@open-wallet-standard/core@1.0.0':
+    resolution: {integrity: sha512-fgA/2QOko9d4wMjRl6d/+bC/qYeP8e4YIJzzLPECAP5bjLbST3co50HHU61jI+JshzXe9KvvixC93i9lmRobMw==}
+    hasBin: true
 
   '@rollup/rollup-android-arm-eabi@4.60.0':
     resolution: {integrity: sha512-WOhNW9K8bR3kf4zLxbfg6Pxu2ybOUbB2AjMDHSQx86LIF4rH4Ft7vmMwNt0loO0eonglSNy4cpD3MKXXKQu0/A==}
@@ -1150,6 +1178,25 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@open-wallet-standard/core-darwin-arm64@1.0.0':
+    optional: true
+
+  '@open-wallet-standard/core-darwin-x64@1.0.0':
+    optional: true
+
+  '@open-wallet-standard/core-linux-arm64-gnu@1.0.0':
+    optional: true
+
+  '@open-wallet-standard/core-linux-x64-gnu@1.0.0':
+    optional: true
+
+  '@open-wallet-standard/core@1.0.0':
+    optionalDependencies:
+      '@open-wallet-standard/core-darwin-arm64': 1.0.0
+      '@open-wallet-standard/core-darwin-x64': 1.0.0
+      '@open-wallet-standard/core-linux-arm64-gnu': 1.0.0
+      '@open-wallet-standard/core-linux-x64-gnu': 1.0.0
 
   '@rollup/rollup-android-arm-eabi@4.60.0':
     optional: true
