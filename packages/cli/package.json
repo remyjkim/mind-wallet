@@ -21,9 +21,12 @@
     "@mindwallet/core": "workspace:*",
     "@mindwallet/discovery": "workspace:*",
     "@mindwallet/protocols": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.27.1"
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "@open-wallet-standard/core": "^1.0.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@types/node": "^25.5.0",
     "tsup": "^8.0.0",
     "typescript": "^5.4.0",
     "vitest": "^1.6.0"

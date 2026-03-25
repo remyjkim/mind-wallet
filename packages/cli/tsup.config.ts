@@ -7,4 +7,6 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   outDir: 'dist',
+  // Native NAPI-RS bindings must not be bundled
+  external: ['@open-wallet-standard/core'],
 });

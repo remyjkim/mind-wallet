@@ -39,19 +39,20 @@ export function createTempoMethod(config: TempoMethodConfig): RouterMethod {
       const req = challenge.request as Record<string, unknown>;
       const transferCall = Actions.token.transfer.call({
         amount: BigInt(req['amount'] as string),
-        to: req['recipient'] as string,
-        token: req['currency'] as string,
-        memo: '',
+        to: req['recipient'] as `0x${string}`,
+        token: req['currency'] as `0x${string}`,
+        memo: '0x' as `0x${string}`,
       });
 
-      const prepared = await prepareTransactionRequest(publicClient as any, {
+      // Use 'as any' — prepareTransactionRequest with calls is extended by viem/tempo
+      const prepared = await (prepareTransactionRequest as any)(publicClient as any, {
         account: config.account,
         calls: [transferCall],
         nonceKey: 'expiring',
       });
-      (prepared as any).gas = (prepared as any).gas + 5000n;
+      prepared.gas = prepared.gas + 5000n;
 
-      const signature = await signTransaction(publicClient as any, prepared as any);
+      const signature = await signTransaction(publicClient as any, prepared);
       return Credential.serialize({
         challenge,
         payload: { signature, type: 'transaction' },
@@ -122,7 +123,7 @@ export function createTempoMethod(config: TempoMethodConfig): RouterMethod {
         method: 'tempo',
         intent: candidate.normalized.intent,
         request: candidate.raw as Record<string, unknown>,
-      });
+      }) as any;
 
       let authorization: string;
       if (candidate.normalized.intent === 'charge') {

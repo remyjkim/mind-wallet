@@ -76,16 +76,17 @@ export function createX402Method(config: X402MethodConfig): RouterMethod {
       // Register a minimal EIP-3009 scheme client for EVM
       client.register(network as `eip155:${number}`, {
         scheme: 'exact',
-        async createPaymentPayload(_version, requirements) {
+        async createPaymentPayload(version, requirements) {
           const { signTypedData } = await import('viem/actions');
           const rpcUrl = `https://mainnet.base.org`; // fallback for base
           const publicClient = createPublicClient({
             transport: http(rpcUrl),
           });
 
-          const payTo = requirements.payTo as `0x${string}`;
-          const asset = requirements.asset as `0x${string}`;
-          const amount = BigInt(requirements.maxAmountRequired);
+          const req = requirements as Record<string, unknown>;
+          const payTo = req['payTo'] as `0x${string}`;
+          const asset = req['asset'] as `0x${string}`;
+          const amount = BigInt(req['maxAmountRequired'] as string);
           const validAfter = BigInt(0);
           const validBefore = BigInt(Math.floor(Date.now() / 1000) + (requirements.maxTimeoutSeconds ?? 300));
           const nonce = crypto.getRandomValues(new Uint8Array(32));
@@ -128,6 +129,7 @@ export function createX402Method(config: X402MethodConfig): RouterMethod {
           });
 
           return {
+            x402Version: version,
             payload: {
               from: config.account.address,
               to: payTo,
@@ -141,13 +143,14 @@ export function createX402Method(config: X402MethodConfig): RouterMethod {
               signature,
             },
             extensions: {},
-          };
+          } as any;
         },
       });
 
       const payload = await client.createPaymentPayload(paymentRequired as any);
-      const headers = encodePaymentSignatureHeader(payload);
-      return headers;
+      const encoded = encodePaymentSignatureHeader(payload);
+      // x402 credentials go in X-PAYMENT header (not Authorization)
+      return { 'X-PAYMENT': encoded };
     },
   };
 }

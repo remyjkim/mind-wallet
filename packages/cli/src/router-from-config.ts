@@ -6,6 +6,7 @@ import {
   createMemoryStore,
   createRouter,
   type MindRouter,
+  type PolicyRule,
 } from '@mindwallet/core';
 import { createSiwxMethod } from '@mindwallet/protocols';
 import type { MindwalletConfig } from './config.js';
@@ -30,20 +31,20 @@ export function routerFromConfig(config: MindwalletConfig): {
 
   const state = createMemoryStore();
 
-  const policy = (config.policy ?? []).map((rule) => {
+  const policy: PolicyRule[] = (config.policy ?? []).map((rule): PolicyRule => {
     if (rule.type === 'budget') {
       return {
-        type: 'budget' as const,
+        type: 'budget',
         currency: rule.currency ?? 'USDC',
-        limit: BigInt(rule.limit ?? '0'),
+        amount: BigInt(rule.limit ?? '0'),
         window: rule.window ?? 'daily',
       };
     }
     if (rule.type === 'deny-protocol') {
-      return { type: 'deny-protocol' as const, protocol: rule.protocol ?? '' };
+      return { type: 'deny-protocol', protocols: [rule.protocol as any] };
     }
     if (rule.type === 'prefer-protocol') {
-      return { type: 'prefer-protocol' as const, protocol: rule.protocol ?? '', boost: rule.boost ?? 0.1 };
+      return { type: 'prefer-protocol', protocol: rule.protocol as any, boost: rule.boost ?? 0.1 };
     }
     throw new Error(`Unknown policy rule type: ${(rule as any).type}`);
   });

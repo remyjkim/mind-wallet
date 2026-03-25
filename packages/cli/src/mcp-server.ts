@@ -36,7 +36,7 @@ export async function startMcpServer(config: MindwalletConfig): Promise<void> {
     {
       url: z.string().url().describe('The URL to fetch'),
       method: z.string().optional().default('GET').describe('HTTP method'),
-      headers: z.record(z.string()).optional().describe('Additional request headers'),
+      headers: z.record(z.string(), z.string()).optional().describe('Additional request headers'),
       body: z.string().optional().describe('Request body for POST/PUT requests'),
     },
     async ({ url, method, headers, body }) => {

@@ -2,10 +2,10 @@
   "name": "mindwallet-monorepo",
   "private": true,
   "scripts": {
-    "build": "pnpm -r build",
+    "build": "pnpm -r --topological-dev build",
     "test": "pnpm -r test",
-    "typecheck": "pnpm -r typecheck",
-    "check": "pnpm -r check"
+    "typecheck": "pnpm run build && pnpm -r typecheck",
+    "check": "pnpm run build && pnpm -r check"
   },
   "devDependencies": {
     "typescript": "^5.4.0",
