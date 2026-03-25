@@ -10,3 +10,6 @@ export { createRouter } from './router.js';
 export type { MindRouter, MindRouterConfig } from './router.js';
 export { DEFAULT_WEIGHTS } from './pipeline/scorer.js';
 export type { ScoringWeights } from './pipeline/scorer.js';
+export { parseHttpChallenges } from './http/parse.js';
+export { wrapFetch } from './http/adapter.js';
+export type { WrapFetchOptions } from './http/adapter.js';
