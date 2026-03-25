@@ -3,7 +3,7 @@
 
 import { Challenge, Credential, Method as MppxMethod } from 'mppx';
 import { Methods as TempoMethods } from 'mppx/tempo';
-import type { RouterMethod, PaymentCandidate, NormalizedPayment } from '@mindwallet/core';
+import type { RouterMethod, PaymentCandidate, NormalizedPayment, RouterStateStore } from '@mindwallet/core';
 import type { Account as ViemAccount } from 'viem';
 import { createPublicClient, http } from 'viem';
 
@@ -17,6 +17,8 @@ export interface TempoMethodConfig {
    * Useful when the gas cost is known in advance or when signing without a funded account.
    */
   gas?: bigint;
+  /** State store for persisting session channel state across calls. */
+  store?: RouterStateStore;
 }
 
 /**
@@ -94,11 +96,25 @@ export function createTempoMethod(config: TempoMethodConfig): RouterMethod {
         account: config.account,
         message: { raw: msgHash },
       });
-      return Credential.serialize({
+      const credential = Credential.serialize({
         challenge,
         payload: { action: 'voucher', channelId, cumulativeAmount, signature },
         source: `did:pkh:eip155:4217:${config.account.address}`,
       });
+
+      if (config.store) {
+        const scopeKey = `tempo-session-${channelId}`;
+        await config.store.putSessionChannel({
+          realm: (req['realm'] as string | undefined) ?? '',
+          channelId,
+          method: 'tempo',
+          acceptedCumulative: BigInt(cumulativeAmount),
+          updatedAt: Date.now(),
+          scopeKey,
+        });
+      }
+
+      return credential;
     },
   });
 
