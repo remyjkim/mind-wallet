@@ -15,7 +15,9 @@ describe.skipIf(skip)('createTempoMethod — createCredential (integration)', ()
 
   beforeAll(() => {
     const account = privateKeyToAccount(process.env['TEST_PRIVATE_KEY'] as `0x${string}`);
-    method = createTempoMethod({ account, rpcUrl: process.env['TEMPO_RPC_URL']! });
+    // gas is provided to skip eth_estimateGas — the test wallet has no USD balance on the
+    // testnet, but we can still verify that createCredential produces a valid signed credential.
+    method = createTempoMethod({ account, rpcUrl: process.env['TEMPO_RPC_URL']!, gas: 200_000n });
   });
 
   it('returns an Authorization header for a charge intent', async () => {
@@ -29,15 +31,22 @@ describe.skipIf(skip)('createTempoMethod — createCredential (integration)', ()
         method: 'tempo',
         intent: 'charge' as const,
         amount: 1_000_000n,
-        currency: 'USDC',
+        currency: '0x20c0000000000000000000000000000000000000',
         hasDigestBinding: false,
       },
+      // request fields mirror the on-chain MPP challenge structure:
+      // amount    — transfer amount in token base units (string)
+      // recipient — payee address (0x-prefixed)
+      // currency  — ERC-20 token contract address on the Tempo chain
+      // chainId   — 42431 = Moderato testnet; omit for mainnet (4217)
       raw: {
         realm: 'https://api.example.com',
         method: 'tempo',
         intent: 'charge',
         amount: '1000000',
-        currency: 'USDC',
+        recipient: '0x0000000000000000000000000000000000000001' as `0x${string}`,
+        currency: '0x20c0000000000000000000000000000000000000' as `0x${string}`,
+        chainId: 42431,
       },
       eligible: true,
     };

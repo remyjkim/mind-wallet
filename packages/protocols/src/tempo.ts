@@ -12,6 +12,11 @@ export interface TempoMethodConfig {
   account: ViemAccount;
   /** Override the default Tempo RPC URL. */
   rpcUrl?: string;
+  /**
+   * Fixed gas limit for charge transactions. When provided, skips eth_estimateGas.
+   * Useful when the gas cost is known in advance or when signing without a funded account.
+   */
+  gas?: bigint;
 }
 
 /**
@@ -29,10 +34,11 @@ export function createTempoMethod(config: TempoMethodConfig): RouterMethod {
 
       const { prepareTransactionRequest, signTransaction } = await import('viem/actions');
       const { Actions } = await import('viem/tempo');
-      const { tempo: tempoChain } = await import('viem/chains');
+      const { tempo: tempoMainnet, tempoModerato } = await import('viem/chains');
+      const chain = chainId === 42431 ? tempoModerato : tempoMainnet;
 
       const publicClient = createPublicClient({
-        chain: tempoChain,
+        chain,
         transport: http(rpcUrl),
       });
 
@@ -44,13 +50,15 @@ export function createTempoMethod(config: TempoMethodConfig): RouterMethod {
         memo: '0x' as `0x${string}`,
       });
 
-      // Use 'as any' — prepareTransactionRequest with calls is extended by viem/tempo
+      // Use 'as any' — prepareTransactionRequest with calls is extended by viem/tempo.
+      // Providing gas skips eth_estimateGas (useful when cost is known or account lacks balance).
       const prepared = await (prepareTransactionRequest as any)(publicClient as any, {
         account: config.account,
         calls: [transferCall],
         nonceKey: 'expiring',
+        ...(config.gas !== undefined ? { gas: config.gas } : {}),
       });
-      prepared.gas = prepared.gas + 5000n;
+      if (config.gas === undefined) prepared.gas = prepared.gas + 5000n;
 
       const signature = await signTransaction(publicClient as any, prepared);
       return Credential.serialize({
