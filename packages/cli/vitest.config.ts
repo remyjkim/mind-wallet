@@ -11,5 +11,11 @@ export default defineConfig({
   },
   test: {
     globals: true,
+    server: {
+      deps: {
+        // NAPI-RS native bindings cannot be bundled by Vite — must be loaded from node_modules
+        external: ['@open-wallet-standard/core'],
+      },
+    },
   },
 });
