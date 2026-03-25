@@ -21,6 +21,9 @@
     "mppx": "^0.4.9",
     "viem": "^2.47.6"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@open-wallet-standard/core": "^1.0.0",
     "@types/node": "^25.5.0",
