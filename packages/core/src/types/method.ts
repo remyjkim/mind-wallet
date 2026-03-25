@@ -12,5 +12,5 @@ export interface RouterMethod {
   createCredential(args: {
     candidate: PaymentCandidate;
     wallet: WalletAdapter;
-  }): Promise<string>;
+  }): Promise<Record<string, string>>;
 }

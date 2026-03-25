@@ -11,7 +11,7 @@ function makeMethod(id: string) {
     protocol: 'mpp' as const,
     canHandle: () => true,
     normalize: (raw: unknown) => raw as any,
-    createCredential: async () => 'auth-header',
+    createCredential: async () => ({ Authorization: 'auth-header' }),
   };
 }
 

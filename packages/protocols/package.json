@@ -15,11 +15,15 @@
     "check": "pnpm typecheck && pnpm build && pnpm test"
   },
   "dependencies": {
-    "@mindwallet/core": "workspace:*"
+    "@coinbase/x402": "^2.1.0",
+    "@mindwallet/core": "workspace:*",
+    "@x402/core": "^2.8.0",
+    "mppx": "^0.4.9",
+    "viem": "^2.47.6"
   },
   "devDependencies": {
-    "typescript": "^5.4.0",
     "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
     "vitest": "^1.6.0"
   }
 }

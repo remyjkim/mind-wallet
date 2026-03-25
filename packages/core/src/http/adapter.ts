@@ -82,9 +82,9 @@ export function wrapFetch(options: WrapFetchOptions): typeof globalThis.fetch {
       });
 
       const startMs = Date.now();
-      let authorization: string;
+      let credentialHeaders: Record<string, string>;
       try {
-        authorization = await decision.candidate.method.createCredential({
+        credentialHeaders = await decision.candidate.method.createCredential({
           candidate: decision.candidate,
           wallet: options.wallet!,
         });
@@ -102,7 +102,9 @@ export function wrapFetch(options: WrapFetchOptions): typeof globalThis.fetch {
       });
 
       const retryHeaders = new Headers(init?.headers);
-      retryHeaders.set('Authorization', authorization);
+      for (const [key, value] of Object.entries(credentialHeaders)) {
+        retryHeaders.set(key, value);
+      }
       response = await innerFetch(input, { ...init, headers: retryHeaders });
 
       const durationMs = Date.now() - startMs;
