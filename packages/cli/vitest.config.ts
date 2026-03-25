@@ -1,6 +1,14 @@
 import { defineConfig } from 'vitest/config';
+import path from 'path';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@mindwallet/core': path.resolve(__dirname, '../core/src/index.ts'),
+      '@mindwallet/protocols': path.resolve(__dirname, '../protocols/src/index.ts'),
+      '@mindwallet/discovery': path.resolve(__dirname, '../discovery/src/index.ts'),
+    },
+  },
   test: {
     globals: true,
   },
