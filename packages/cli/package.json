@@ -25,6 +25,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@mindwallet/test-server": "workspace:*",
     "@open-wallet-standard/core": "^1.0.0",
     "@types/node": "^25.5.0",
     "tsup": "^8.0.0",
