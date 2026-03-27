@@ -41,12 +41,10 @@ export function routerFromConfig(config: MindwalletConfig): {
   router: MindRouter;
   wallet: OwsWalletAdapter;
 } {
-  const passphrase = config.passphrase ?? process.env['OWS_PASSPHRASE'];
-
   const wallet = new OwsWalletAdapter({
     walletId: config.walletId,
     vaultPath: config.vaultPath,
-    passphrase,
+    passphrase: config.passphrase,
   });
 
   const state = createMemoryStore();
