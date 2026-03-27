@@ -2,9 +2,9 @@
 sidebar_position: 4
 ---
 
-# mindwallet CLI
+# mindpass CLI
 
-CLI and MCP server that wires all `@mindwallet/*` packages together.
+CLI and MCP server that wires all `@mindpass/*` packages together.
 
 ## Commands
 
@@ -13,9 +13,9 @@ CLI and MCP server that wires all `@mindwallet/*` packages together.
 Make a paid HTTP request:
 
 ```bash
-mindwallet fetch https://api.example.com/data
-mindwallet fetch https://api.example.com/data --verbose
-mindwallet fetch https://api.example.com/data --method POST
+mindpass fetch https://api.example.com/data
+mindpass fetch https://api.example.com/data --verbose
+mindpass fetch https://api.example.com/data --method POST
 ```
 
 ### pay
@@ -23,8 +23,8 @@ mindwallet fetch https://api.example.com/data --method POST
 Probe first, then pay:
 
 ```bash
-mindwallet pay https://api.example.com/data
-mindwallet pay https://api.example.com/data --verbose
+mindpass pay https://api.example.com/data
+mindpass pay https://api.example.com/data --verbose
 ```
 
 ### discover
@@ -32,8 +32,8 @@ mindwallet pay https://api.example.com/data --verbose
 Probe an origin for payment requirements:
 
 ```bash
-mindwallet discover https://api.example.com
-mindwallet discover https://api.example.com --json
+mindpass discover https://api.example.com
+mindpass discover https://api.example.com --json
 ```
 
 ### search
@@ -41,8 +41,8 @@ mindwallet discover https://api.example.com --json
 Search the registry for paid APIs:
 
 ```bash
-mindwallet search "weather data"
-mindwallet search "weather data" --json
+mindpass search "weather data"
+mindpass search "weather data" --json
 ```
 
 ### wallet
@@ -50,7 +50,7 @@ mindwallet search "weather data" --json
 Inspect an existing OWS wallet:
 
 ```bash
-mindwallet wallet
+mindpass wallet
 ```
 
 ### key
@@ -58,9 +58,9 @@ mindwallet wallet
 Manage OWS agent keys:
 
 ```bash
-mindwallet key create my-agent
-mindwallet key list
-mindwallet key revoke <key-id>
+mindpass key create my-agent
+mindpass key list
+mindpass key revoke <key-id>
 ```
 
 ### mcp
@@ -68,7 +68,7 @@ mindwallet key revoke <key-id>
 Start the MCP server:
 
 ```bash
-mindwallet mcp
+mindpass mcp
 ```
 
 ### version
@@ -76,7 +76,7 @@ mindwallet mcp
 Print the installed CLI version:
 
 ```bash
-mindwallet --version
+mindpass --version
 ```
 
 ## Configuration

@@ -1,11 +1,11 @@
 {
-  "name": "mindwallet-docs",
+  "name": "mindpass-docs",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "docusaurus start",
     "build": "docusaurus build",
-    "deploy:pages": "wrangler pages deploy build --project-name mindwallet-docs",
+    "deploy:pages": "wrangler pages deploy build --project-name mindpass-docs",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",

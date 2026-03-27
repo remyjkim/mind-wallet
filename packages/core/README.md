@@ -1,11 +1,11 @@
-# @mindwallet/core
+# @mindpass/core
 
 Protocol-agnostic payment routing, wallet adapters, policy evaluation, and `fetch()` wrapping for agent payment flows.
 
 ## Install
 
 ```bash
-npm install @mindwallet/core
+npm install @mindpass/core
 ```
 
 ## What It Provides
@@ -18,7 +18,7 @@ npm install @mindwallet/core
 ## Minimal Example
 
 ```ts
-import { createMemoryStore, createRouter, wrapFetch, PrivateKeyWalletAdapter } from '@mindwallet/core';
+import { createMemoryStore, createRouter, wrapFetch, PrivateKeyWalletAdapter } from '@mindpass/core';
 
 const wallet = new PrivateKeyWalletAdapter({
   privateKey: '0x...',
@@ -31,4 +31,4 @@ const paidFetch = wrapFetch({ fetch: globalThis.fetch, router, state, wallet });
 ```
 
 See the root repo for full protocol wiring examples and CLI usage:
-https://github.com/remyjkim/mind-wallet
+https://github.com/remyjkim/mindpass

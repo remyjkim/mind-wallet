@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# @mindwallet/discovery
+# @mindpass/discovery
 
 Pre-flight origin probing and registry search.
 
@@ -11,8 +11,8 @@ Pre-flight origin probing and registry search.
 Probes a URL to discover its payment protocol requirements before making a paid request.
 
 ```typescript
-import { probeOrigin } from '@mindwallet/discovery';
-import { createSiwxMethod, createX402Method } from '@mindwallet/protocols';
+import { probeOrigin } from '@mindpass/discovery';
+import { createSiwxMethod, createX402Method } from '@mindpass/protocols';
 
 const methods = [createSiwxMethod(), createX402Method({ account })];
 const result = await probeOrigin('https://api.example.com/data', methods);
@@ -27,8 +27,8 @@ if (result.reachable) {
 
 ```bash
 # Discover payment requirements for a URL
-mindwallet discover https://api.example.com
+mindpass discover https://api.example.com
 
 # Search the registry for paid APIs
-mindwallet search "weather data"
+mindpass search "weather data"
 ```

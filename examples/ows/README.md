@@ -1,6 +1,6 @@
 # OWS Example
 
-This example bootstraps a disposable local OWS vault and runs a small app that imports the `mindwallet` package directly.
+This example bootstraps a disposable local OWS vault and runs a small app that imports the `mindpass` package directly.
 
 ## What it creates
 
@@ -8,9 +8,9 @@ Running setup creates example-local files only:
 
 - `.demo/vault/` — disposable OWS vault
 - `.env` — local env file with `CONFIG_PATH` and `OWS_PASSPHRASE`
-- `mindwallet.config.json` — config file pointing at the local vault
+- `mindpass.config.json` — config file pointing at the local vault
 
-It does not write to your real `~/.config/mindwallet` config or your real OWS vault.
+It does not write to your real `~/.config/mindpass` config or your real OWS vault.
 
 ## Commands
 
@@ -44,7 +44,7 @@ bun run check
 The example app:
 
 1. loads the generated `.env`
-2. loads `mindwallet.config.json` through the `mindwallet` package
+2. loads `mindpass.config.json` through the `mindpass` package
 3. builds a router with `routerFromConfig()`
 4. reads the example wallet account and prints a short summary
 

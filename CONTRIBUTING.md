@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for contributing to `mindwallet`.
+Thanks for contributing to `mindpass`.
 
 ## Local Setup
 
@@ -12,7 +12,7 @@ Useful commands:
 
 ```bash
 bun run check
-bun run --filter mindwallet check
+bun run --filter mindpass check
 cd docs && bun run build
 ```
 

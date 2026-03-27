@@ -1,11 +1,11 @@
-# @mindwallet/protocols
+# @mindpass/protocols
 
-Concrete `RouterMethod` implementations for the payment protocols supported by `mindwallet`.
+Concrete `RouterMethod` implementations for the payment protocols supported by `mindpass`.
 
 ## Install
 
 ```bash
-npm install @mindwallet/protocols
+npm install @mindpass/protocols
 ```
 
 ## Included Methods
@@ -17,7 +17,7 @@ npm install @mindwallet/protocols
 ## Minimal Example
 
 ```ts
-import { createSiwxMethod, createTempoMethod, createX402Method } from '@mindwallet/protocols';
+import { createSiwxMethod, createTempoMethod, createX402Method } from '@mindpass/protocols';
 import { privateKeyToAccount } from 'viem/accounts';
 
 const account = privateKeyToAccount('0x...');
@@ -30,4 +30,4 @@ const methods = [
 ```
 
 See the root repo for end-to-end router examples:
-https://github.com/remyjkim/mind-wallet
+https://github.com/remyjkim/mindpass

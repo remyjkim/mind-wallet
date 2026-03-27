@@ -3,7 +3,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'mindwallet',
+  title: 'mindpass',
   tagline: 'Agent Payment SDK for the Multi-Protocol Economy',
   favicon: 'img/favicon.ico',
 
@@ -11,11 +11,11 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'https://docs.mindwallet.dev',
+  url: 'https://docs.mindpass.dev',
   baseUrl: '/',
 
-  organizationName: 'inf-minds',
-  projectName: 'mind-wallet',
+  organizationName: 'remyjkim',
+  projectName: 'mindpass',
 
   onBrokenLinks: 'throw',
 
@@ -39,7 +39,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/inf-minds/mind-wallet/tree/main/docs/',
+          editUrl: 'https://github.com/remyjkim/mindpass/tree/main/docs/',
         },
         blog: false,
         theme: {
@@ -54,7 +54,7 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'mindwallet',
+      title: 'mindpass',
       items: [
         {
           type: 'docSidebar',
@@ -63,7 +63,7 @@ const config: Config = {
           label: 'Docs',
         },
         {
-          href: 'https://github.com/inf-minds/mind-wallet',
+          href: 'https://github.com/remyjkim/mindpass',
           label: 'GitHub',
           position: 'right',
         },
@@ -90,7 +90,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/inf-minds/mind-wallet',
+              href: 'https://github.com/remyjkim/mindpass',
             },
           ],
         },

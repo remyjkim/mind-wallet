@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Policy Rules
 
-Policy rules control which payment protocols and amounts mindwallet will accept. They are evaluated during the selection pipeline's filter stage.
+Policy rules control which payment protocols and amounts mindpass will accept. They are evaluated during the selection pipeline's filter stage.
 
 ## Configuration
 

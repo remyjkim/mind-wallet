@@ -33,12 +33,12 @@ All notable changes to this project should be documented in this file.
 
 ### Initial packages
 
-- `@mindwallet/core`
-- `@mindwallet/protocols`
-- `@mindwallet/discovery`
+- `@mindpass/core`
+- `@mindpass/protocols`
+- `@mindpass/discovery`
 
 ### Initial CLI
 
-- `mindwallet` CLI and MCP server
+- `mindpass` CLI and MCP server
 - OWS and private-key wallet support
 - SIWX, x402, and Tempo-capable routing

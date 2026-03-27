@@ -1,70 +1,74 @@
-# mindwallet
+# Mindpass
 
-**Agent payment SDK for the multi-protocol economy.**
+**Minds that can think but can't buy — until now.**
 
-AI agents need to pay for APIs, authenticate their identity, and manage budgets — all without human intervention. Today's payment landscape is fragmented across competing protocols (x402, MPP/Tempo, SIWX), each with different challenge formats, credential types, and signing requirements. An agent that works with one protocol is blind to the others.
+A new class of minds is emerging: AI agents that reason, plan, and act autonomously. They can synthesize research, write code, and orchestrate complex workflows. But the moment they need to participate in the real economy — buy a dataset, pay for an API call, authenticate with a service — they stall. We gave them intelligence but no economic agency. mindpass changes that.
 
-mindwallet solves this by wrapping `fetch()` with an intelligent payment layer that automatically detects, evaluates, and resolves HTTP 402 challenges across all major agent payment protocols. Your agent writes `fetch(url)` and mindwallet handles the rest — protocol detection, candidate scoring, policy enforcement, credential signing, and retry.
+Today's agent payment landscape is fragmented across competing protocols (x402, MPP/Tempo, SIWX), each with incompatible challenge formats, credential types, and signing requirements. An agent built for one is blind to the others. mindpass is a payment intelligence layer that wraps `fetch()` to automatically detect, evaluate, and resolve these challenges — so your agent can transact across any protocol without knowing or caring which one is behind the door. Protocol detection, candidate scoring, budget enforcement, credential signing, and retry — all invisible. Your agent writes `fetch(url)`. mindpass handles the rest.
 
 ```bash
 # Preferred native install
-brew install remyjkim/tap/mindwallet
+brew tap remyjkim/mindpass
+brew install mindpass
 
 # Alternate package-manager install
-npm install -g mindwallet
+npm install -g mindpass-cli
 
-export MINDWALLET_PRIVATE_KEY=0x...
-mindwallet fetch https://paid-api.example.com/data
+export MINDPASS_PRIVATE_KEY=0x...
+mindpass fetch https://paid-api.example.com/data
 ```
 
-## Why mindwallet?
+## Why mindpass?
 
-| Problem | How mindwallet solves it |
-|---------|--------------------------|
-| Agents fail on 402 responses | `wrapFetch` intercepts 402s and resolves them transparently |
+
+| Problem                                           | How mindpass solves it                                                                    |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Agents fail on 402 responses                      | `wrapFetch` intercepts 402s and resolves them transparently                               |
 | Multiple payment protocols with different formats | Unified selection pipeline normalizes x402, Tempo, and SIWX into a common candidate model |
-| No budget controls for autonomous agents | Policy engine enforces spending caps, protocol allow/deny lists, and preference rules |
-| Wallet setup complexity | Two modes: raw private key (one env var) or OWS vault (production-grade custody) |
-| No visibility into payment decisions | Structured audit trail of every candidate considered, scored, and selected |
+| No budget controls for autonomous agents          | Policy engine enforces spending caps, protocol allow/deny lists, and preference rules     |
+| Wallet setup complexity                           | Two modes: raw private key (one env var) or OWS vault (production-grade custody)          |
+| No visibility into payment decisions              | Structured audit trail of every candidate considered, scored, and selected                |
 
 ## Supported Protocols
 
-| Protocol | What It Does | Credential Type |
-|----------|-------------|-----------------|
-| **x402** | EVM USDC micropayments | EIP-3009 `transferWithAuthorization` signature |
-| **Tempo** | MPP charge and session payments | Signed EVM transaction (pull or push mode) |
-| **SIWX** | Zero-cost identity authentication | Signed SIWE message |
+
+| Protocol  | What It Does                      | Credential Type                               |
+| ----------- | ----------------------------------- | ----------------------------------------------- |
+| **x402**  | EVM USDC micropayments            | EIP-3009`transferWithAuthorization` signature |
+| **Tempo** | MPP charge and session payments   | Signed EVM transaction (pull or push mode)    |
+| **SIWX**  | Zero-cost identity authentication | Signed SIWE message                           |
 
 ## Quick Start
 
 ### CLI
 
 ```bash
-brew install remyjkim/tap/mindwallet
+brew tap remyjkim/mindpass
+brew install mindpass
 
 # Alternate npm path
-npm install -g mindwallet
+npm install -g mindpass-cli
 
 # Private key mode (fastest — one env var, all protocols enabled)
-export MINDWALLET_PRIVATE_KEY=0x...
-mindwallet fetch https://paid-api.example.com/data
-mindwallet discover https://paid-api.example.com/data --json
+export MINDPASS_PRIVATE_KEY=0x...
+mindpass fetch https://paid-api.example.com/data
+mindpass discover https://paid-api.example.com/data --json
 
 # Inspect an existing OWS vault
-mindwallet wallet
+mindpass wallet
 
 # Create an OWS API key from an existing vault
-mindwallet key create my-agent
+mindpass key create my-agent
 
 # Check the installed CLI version
-mindwallet --version
+mindpass --version
 ```
 
 ### MCP Server (for AI agents)
 
 ```bash
-# Expose mindwallet as MCP tools for your AI agent
-mindwallet mcp
+# Expose mindpass as MCP tools for your AI agent
+mindpass mcp
 ```
 
 Tools: `fetch_with_payment`, `probe_origin`
@@ -72,15 +76,15 @@ Tools: `fetch_with_payment`, `probe_origin`
 ### Library
 
 ```bash
-npm install @mindwallet/core @mindwallet/protocols
+npm install @mindpass/core @mindpass/protocols
 ```
 
 ```typescript
-import { createMemoryStore, createRouter, PrivateKeyWalletAdapter, wrapFetch } from '@mindwallet/core';
-import { createSiwxMethod, createX402Method, createTempoMethod } from '@mindwallet/protocols';
+import { createMemoryStore, createRouter, PrivateKeyWalletAdapter, wrapFetch } from '@mindpass/core';
+import { createSiwxMethod, createX402Method, createTempoMethod } from '@mindpass/protocols';
 import { privateKeyToAccount } from 'viem/accounts';
 
-const privateKey = process.env.MINDWALLET_PRIVATE_KEY!;
+const privateKey = process.env.MINDPASS_PRIVATE_KEY!;
 const account = privateKeyToAccount(privateKey);
 const state = createMemoryStore();
 const wallet = new PrivateKeyWalletAdapter({ privateKey });
@@ -101,12 +105,13 @@ console.log(await res.text());
 
 ## Packages
 
-| Package | Description |
-|---------|-------------|
-| [`@mindwallet/core`](packages/core) | Selection pipeline, wallet adapters, state, policy engine, `wrapFetch` |
-| [`@mindwallet/protocols`](packages/protocols) | x402, Tempo, and SIWX `RouterMethod` implementations |
-| [`@mindwallet/discovery`](packages/discovery) | Origin probing and registry search |
-| [`mindwallet`](packages/cli) | CLI + MCP server |
+
+| Package                                     | Description                                                           |
+| --------------------------------------------- | ----------------------------------------------------------------------- |
+| [`@mindpass/core`](packages/core)           | Selection pipeline, wallet adapters, state, policy engine,`wrapFetch` |
+| [`@mindpass/protocols`](packages/protocols) | x402, Tempo, and SIWX`RouterMethod` implementations                   |
+| [`@mindpass/discovery`](packages/discovery) | Origin probing and registry search                                    |
+| [`mindpass-cli`](packages/cli)              | CLI + MCP server                                                      |
 
 ## How It Works
 
@@ -156,20 +161,20 @@ Agent calls fetch(url)
 
 ## Configuration
 
-mindwallet can be configured entirely through environment variables — no config file required.
+mindpass can be configured entirely through environment variables — no config file required.
 
 ```bash
 # Private key wallet (enables x402 + Tempo + SIWX)
-export MINDWALLET_PRIVATE_KEY=0x...
-export MINDWALLET_CHAIN_IDS=eip155:8453,eip155:4217
+export MINDPASS_PRIVATE_KEY=0x...
+export MINDPASS_CHAIN_IDS=eip155:8453,eip155:4217
 
 # OWS wallet (SIWX only, production custody)
-export MINDWALLET_WALLET_ID=default
-export MINDWALLET_VAULT_PATH=~/.minds/wallet/vault
+export MINDPASS_WALLET_ID=default
+export MINDPASS_VAULT_PATH=~/.minds/wallet/vault
 
 # RPC overrides
-export MINDWALLET_RPC_BASE=https://mainnet.base.org
-export MINDWALLET_RPC_TEMPO=https://rpc.mainnet.tempo.xyz
+export MINDPASS_RPC_BASE=https://mainnet.base.org
+export MINDPASS_RPC_TEMPO=https://rpc.mainnet.tempo.xyz
 ```
 
 Resolution order: **env vars > config file > defaults**. See the [env vars guide](docs/docs/guides/env-vars.md) for the full reference.
@@ -178,19 +183,19 @@ Resolution order: **env vars > config file > defaults**. See the [env vars guide
 
 ### Private key CLI
 
-- Install `mindwallet` with Homebrew
-- Set `MINDWALLET_PRIVATE_KEY`
-- Run `mindwallet fetch <url>` or `mindwallet pay <url>`
+- Install `mindpass` with Homebrew
+- Set `MINDPASS_PRIVATE_KEY`
+- Run `mindpass fetch <url>` or `mindpass pay <url>`
 
 ### OWS setup
 
 - Use an existing OWS vault, or bootstrap the repo example in [`examples/ows`](examples/ows)
-- Point the CLI at that vault with `CONFIG_PATH` or `MINDWALLET_WALLET_ID` / `MINDWALLET_VAULT_PATH`
-- Run `mindwallet wallet` and `mindwallet key create <name>`
+- Point the CLI at that vault with `CONFIG_PATH` or `MINDPASS_WALLET_ID` / `MINDPASS_VAULT_PATH`
+- Run `mindpass wallet` and `mindpass key create <name>`
 
 ### MCP usage
 
-- Start the stdio MCP server with `mindwallet mcp`
+- Start the stdio MCP server with `mindpass mcp`
 - Use the exposed `fetch_with_payment` and `probe_origin` tools from your MCP client
 
 ## Project Files
@@ -214,7 +219,7 @@ Control what your agent is allowed to spend:
 }
 ```
 
-mindwallet's policy engine is designed for extension. Future capabilities include:
+mindpass's policy engine is designed for extension. Future capabilities include:
 
 - **Optimization routers** — external scoring services that factor in real-time gas prices, liquidity, and historical success rates across protocols
 - **Agent guardrails** — permission boundaries that constrain what URLs, domains, and operations an agent can pay for, preventing confused-deputy attacks and budget overruns

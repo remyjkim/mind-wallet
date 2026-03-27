@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# @mindwallet/core
+# @mindpass/core
 
 Protocol-agnostic selection pipeline, wallet interface, state management, and HTTP adapter.
 

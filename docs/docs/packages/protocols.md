@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# @mindwallet/protocols
+# @mindpass/protocols
 
 Concrete `RouterMethod` implementations for each payment protocol.
 
@@ -13,7 +13,7 @@ Concrete `RouterMethod` implementations for each payment protocol.
 Zero-cost identity authentication via Sign-In with X (SIWE).
 
 ```typescript
-import { createSiwxMethod } from '@mindwallet/protocols';
+import { createSiwxMethod } from '@mindpass/protocols';
 
 const siwx = createSiwxMethod();
 ```
@@ -25,7 +25,7 @@ No configuration required. Works with any `WalletAdapter`.
 EVM USDC payments via the x402 protocol (EIP-3009 `transferWithAuthorization`).
 
 ```typescript
-import { createX402Method } from '@mindwallet/protocols';
+import { createX402Method } from '@mindpass/protocols';
 import { privateKeyToAccount } from 'viem/accounts';
 
 const account = privateKeyToAccount('0x...');
@@ -39,7 +39,7 @@ Requires a viem `Account` for EIP-712 typed-data signing.
 MPP/Tempo charge and session payment intents.
 
 ```typescript
-import { createTempoMethod } from '@mindwallet/protocols';
+import { createTempoMethod } from '@mindpass/protocols';
 
 const tempo = createTempoMethod({
   account,

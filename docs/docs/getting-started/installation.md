@@ -7,26 +7,27 @@ sidebar_position: 1
 ## CLI (recommended for agents)
 
 ```bash
-brew install remyjkim/tap/mindwallet
+brew tap remyjkim/mindpass
+brew install mindpass
 ```
 
 Alternate install path:
 
 ```bash
-npm install -g mindwallet
+npm install -g mindpass-cli
 ```
 
 ## Library (for SDK consumers)
 
 ```bash
 # Core selection pipeline + wallet interface
-npm install @mindwallet/core
+npm install @mindpass/core
 
 # Protocol implementations (x402, Tempo, SIWX)
-npm install @mindwallet/protocols
+npm install @mindpass/protocols
 
 # Optional: discovery and registry search
-npm install @mindwallet/discovery
+npm install @mindpass/discovery
 ```
 
 ## Requirements

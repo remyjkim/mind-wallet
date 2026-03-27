@@ -2,7 +2,7 @@
 
 ## Our Pledge
 
-We want participation in the `mindwallet` project to be respectful, technically rigorous, and welcoming.
+We want participation in the `mindpass` project to be respectful, technically rigorous, and welcoming.
 
 ## Expected Behavior
 

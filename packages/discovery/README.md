@@ -1,11 +1,11 @@
-# @mindwallet/discovery
+# @mindpass/discovery
 
 Utilities for probing payment-gated origins and searching a registry of supported origins.
 
 ## Install
 
 ```bash
-npm install @mindwallet/discovery
+npm install @mindpass/discovery
 ```
 
 ## Main APIs
@@ -16,12 +16,12 @@ npm install @mindwallet/discovery
 ## Minimal Example
 
 ```ts
-import { probeOrigin } from '@mindwallet/discovery';
-import { createSiwxMethod } from '@mindwallet/protocols';
+import { probeOrigin } from '@mindpass/discovery';
+import { createSiwxMethod } from '@mindpass/protocols';
 
 const result = await probeOrigin('https://api.example.com/data', [createSiwxMethod()]);
 console.log(result.requires402, result.candidates);
 ```
 
 See the root repo for CLI and MCP usage:
-https://github.com/remyjkim/mind-wallet
+https://github.com/remyjkim/mindpass

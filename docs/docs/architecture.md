@@ -8,10 +8,10 @@ sidebar_position: 2
 
 ```mermaid
 graph TD
-    CLI["mindwallet (CLI + MCP server)"]
-    Core["@mindwallet/core"]
-    Protocols["@mindwallet/protocols"]
-    Discovery["@mindwallet/discovery"]
+    CLI["mindpass (CLI + MCP server)"]
+    Core["@mindpass/core"]
+    Protocols["@mindpass/protocols"]
+    Discovery["@mindpass/discovery"]
 
     CLI --> Core
     CLI --> Protocols
@@ -24,7 +24,7 @@ The layers compose cleanly — each package is independently usable and independ
 
 ## Selection Pipeline
 
-When a 402 response is received, mindwallet runs a multi-stage selection pipeline:
+When a 402 response is received, mindpass runs a multi-stage selection pipeline:
 
 ```mermaid
 flowchart LR
@@ -47,7 +47,7 @@ flowchart LR
 
 ## Wallet Adapters
 
-mindwallet supports two wallet modes via the `WalletAdapter` interface:
+mindpass supports two wallet modes via the `WalletAdapter` interface:
 
 | Adapter | Protocols | Use Case |
 |---------|-----------|----------|
