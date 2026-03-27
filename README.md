@@ -6,20 +6,12 @@ AI agents need to pay for APIs, authenticate their identity, and manage budgets 
 
 mindwallet solves this by wrapping `fetch()` with an intelligent payment layer that automatically detects, evaluates, and resolves HTTP 402 challenges across all major agent payment protocols. Your agent writes `fetch(url)` and mindwallet handles the rest — protocol detection, candidate scoring, policy enforcement, credential signing, and retry.
 
-```typescript
-import { createRouter, wrapFetch, createMemoryStore, PrivateKeyWalletAdapter } from '@mindwallet/core';
-import { createSiwxMethod, createX402Method, createTempoMethod } from '@mindwallet/protocols';
-import { privateKeyToAccount } from 'viem/accounts';
+```bash
+# Fastest path: use the CLI with a private key wallet
+npm install -g mindwallet
 
-const account = privateKeyToAccount('0x...');
-const wallet = new PrivateKeyWalletAdapter({ privateKey: '0x...' });
-const state = createMemoryStore();
-const methods = [createSiwxMethod(), createX402Method({ account }), createTempoMethod({ account, store: state })];
-const router = createRouter({ methods, state, policy: [] });
-
-// Drop-in fetch replacement — handles 402s automatically
-const paidFetch = wrapFetch({ fetch, router, state, wallet });
-const response = await paidFetch('https://paid-api.example.com/data');
+export MINDWALLET_PRIVATE_KEY=0x...
+mindwallet fetch https://paid-api.example.com/data
 ```
 
 ## Why mindwallet?
@@ -78,10 +70,27 @@ npm install @mindwallet/core @mindwallet/protocols
 ```
 
 ```typescript
-const paidFetch = wrapFetch({ fetch, router, state, wallet });
+import { createMemoryStore, createRouter, PrivateKeyWalletAdapter, wrapFetch } from '@mindwallet/core';
+import { createSiwxMethod, createX402Method, createTempoMethod } from '@mindwallet/protocols';
+import { privateKeyToAccount } from 'viem/accounts';
 
-// That's it. Use paidFetch exactly like fetch().
+const privateKey = process.env.MINDWALLET_PRIVATE_KEY!;
+const account = privateKeyToAccount(privateKey);
+const state = createMemoryStore();
+const wallet = new PrivateKeyWalletAdapter({ privateKey });
+const router = createRouter({
+  methods: [
+    createSiwxMethod(),
+    createX402Method({ account }),
+    createTempoMethod({ account, store: state }),
+  ],
+  state,
+  policy: [],
+});
+
+const paidFetch = wrapFetch({ fetch, router, state, wallet });
 const res = await paidFetch('https://api.example.com/data');
+console.log(await res.text());
 ```
 
 ## Packages
@@ -207,6 +216,8 @@ mindwallet's policy engine is designed for extension. Future capabilities includ
 - **Telemetry and audit** — structured event hooks for every payment decision, enabling dashboards, alerting, and compliance reporting
 
 ## Development
+
+This monorepo uses Bun for local development and verification. End users can still install the published CLI and SDK packages with `npm`.
 
 ```bash
 # Install dependencies
