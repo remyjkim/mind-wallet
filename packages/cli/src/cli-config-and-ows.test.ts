@@ -1,0 +1,265 @@
+// ABOUTME: Black-box tests for binary config resolution and config-backed CLI flows
+// ABOUTME: Verifies the compiled CLI works with env-only and file-backed configuration
+
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { createServer } from 'node:http';
+import type { TestServerHandle } from '@mindwallet/test-server';
+import { runMindwallet, makeTempConfigHome, writeRawConfig } from './cli-binary-test-helpers.js';
+import {
+  createTempOwsFixture,
+  startLocalPaymentTestServer,
+  startSiwxTestServer,
+  TEST_PRIVATE_KEY,
+  type SiwxTestServer,
+} from './test-helpers.js';
+
+describe('mindwallet binary config resolution', () => {
+  let server: TestServerHandle;
+  let siwxServer: SiwxTestServer;
+
+  beforeAll(async () => {
+    server = await startLocalPaymentTestServer();
+    siwxServer = await startSiwxTestServer();
+  });
+
+  afterAll(async () => {
+    await server.close();
+    await siwxServer.close();
+  });
+
+  it('accepts MINDWALLET_PRIVATE_KEY without a config file for pay flows', async () => {
+    const home = makeTempConfigHome();
+    const result = await runMindwallet({
+      args: ['pay', `${server.url}/x402/data`],
+      env: {
+        ...process.env,
+        HOME: home,
+        MINDWALLET_PRIVATE_KEY: TEST_PRIVATE_KEY,
+        MINDWALLET_CHAIN_IDS: 'eip155:84532',
+      },
+    });
+
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('paid x402 content');
+  });
+
+  it('fails clearly when config JSON is malformed', async () => {
+    const home = makeTempConfigHome();
+    writeRawConfig(home, '{not-json');
+
+    const result = await runMindwallet({
+      args: ['wallet'],
+      env: {
+        ...process.env,
+        HOME: home,
+      },
+    });
+
+    expect(result.code).toBe(1);
+    expect(result.stderr).toContain('Expected property name');
+  });
+
+  it('uses a file-backed OWS config for wallet and key flows', async () => {
+    const fixture = createTempOwsFixture();
+
+    const walletResult = await runMindwallet({
+      args: ['wallet'],
+      env: {
+        ...process.env,
+        HOME: fixture.home,
+      },
+    });
+    expect(walletResult.code).toBe(0);
+    expect(walletResult.stdout).toContain('Wallet: default');
+    expect(walletResult.stdout).toContain('Accounts (');
+
+    const createResult = await runMindwallet({
+      args: ['key', 'create', 'binary-test-key'],
+      env: {
+        ...process.env,
+        HOME: fixture.home,
+        OWS_PASSPHRASE: '',
+      },
+    });
+    expect(createResult.code).toBe(0);
+    expect(createResult.stdout).toContain('Key created:');
+    expect(createResult.stdout).toContain('Token:');
+
+    const listResult = await runMindwallet({
+      args: ['key', 'list'],
+      env: {
+        ...process.env,
+        HOME: fixture.home,
+      },
+    });
+    expect(listResult.code).toBe(0);
+    expect(listResult.stdout).toContain('binary-test-key');
+
+    const keyId = createResult.stdout.match(/ID:\s+([^\n]+)/)?.[1];
+    expect(keyId).toBeTruthy();
+
+    const revokeResult = await runMindwallet({
+      args: ['key', 'revoke', keyId!],
+      env: {
+        ...process.env,
+        HOME: fixture.home,
+      },
+    });
+    expect(revokeResult.code).toBe(0);
+    expect(revokeResult.stdout).toContain(`Key ${keyId} revoked.`);
+  });
+
+  it('supports local OWS SIWX fetch and pay flows through the binary', async () => {
+    const fixture = createTempOwsFixture({ walletId: 'test-wallet' });
+
+    const fetchResult = await runMindwallet({
+      args: ['fetch', `${siwxServer.url}/resource`],
+      env: {
+        ...process.env,
+        HOME: fixture.home,
+      },
+    });
+    expect(fetchResult.code).toBe(0);
+    expect(fetchResult.stdout).toContain('protected content');
+
+    const payResult = await runMindwallet({
+      args: ['pay', `${siwxServer.url}/resource`, '--verbose'],
+      env: {
+        ...process.env,
+        HOME: fixture.home,
+      },
+    });
+    expect(payResult.code).toBe(0);
+    expect(payResult.stdout).toContain('protected content');
+    expect(payResult.stderr).toContain('payment candidate');
+    expect(payResult.stderr).toContain('HTTP 200');
+  });
+
+  it('supports local private-key x402 fetch and pay flows through the binary', async () => {
+    const home = makeTempConfigHome();
+
+    const fetchResult = await runMindwallet({
+      args: ['fetch', `${server.url}/x402/data`],
+      env: {
+        ...process.env,
+        HOME: home,
+        MINDWALLET_PRIVATE_KEY: TEST_PRIVATE_KEY,
+        MINDWALLET_CHAIN_IDS: 'eip155:84532',
+      },
+    });
+    expect(fetchResult.code).toBe(0);
+    expect(fetchResult.stdout).toContain('paid x402 content');
+
+    const payResult = await runMindwallet({
+      args: ['pay', `${server.url}/x402/data`, '--verbose'],
+      env: {
+        ...process.env,
+        HOME: home,
+        MINDWALLET_PRIVATE_KEY: TEST_PRIVATE_KEY,
+        MINDWALLET_CHAIN_IDS: 'eip155:84532',
+      },
+    });
+    expect(payResult.code).toBe(0);
+    expect(payResult.stdout).toContain('paid x402 content');
+    expect(payResult.stderr).toContain('x402');
+    expect(payResult.stderr).toContain('HTTP 200');
+  });
+
+  it('reports local tempo candidates in verbose pay output through the binary', async () => {
+    const home = makeTempConfigHome();
+
+    const result = await runMindwallet({
+      args: ['pay', `${server.url}/mpp/data`, '--verbose'],
+      env: {
+        ...process.env,
+        HOME: home,
+        MINDWALLET_PRIVATE_KEY: TEST_PRIVATE_KEY,
+        MINDWALLET_CHAIN_IDS: 'eip155:8453',
+      },
+    });
+
+    expect(result.code).toBe(0);
+    expect(result.stderr).toContain('tempo');
+  });
+
+  it('discovers SIWX payment requirements through the binary', async () => {
+    const result = await runMindwallet({
+      args: ['discover', `${siwxServer.url}/resource`],
+    });
+
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('payment candidate');
+    expect(result.stdout).toContain('protocol=siwx');
+  });
+
+  it('discovers x402 payment requirements through the binary in private-key mode', async () => {
+    const result = await runMindwallet({
+      args: ['discover', `${server.url}/x402/data`],
+      env: {
+        ...process.env,
+        HOME: makeTempConfigHome(),
+        MINDWALLET_PRIVATE_KEY: TEST_PRIVATE_KEY,
+        MINDWALLET_CHAIN_IDS: 'eip155:84532',
+      },
+    });
+
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('protocol=x402');
+  });
+
+  it('discovers tempo payment requirements through the binary in private-key mode', async () => {
+    const result = await runMindwallet({
+      args: ['discover', `${server.url}/mpp/data`],
+      env: {
+        ...process.env,
+        HOME: makeTempConfigHome(),
+        MINDWALLET_PRIVATE_KEY: TEST_PRIVATE_KEY,
+        MINDWALLET_CHAIN_IDS: 'eip155:8453',
+      },
+    });
+
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('method=tempo');
+  });
+
+  it('searches a local registry through the binary', async () => {
+    const registry = createServer((req, res) => {
+      if (req.url?.startsWith('/origins')) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify([
+          {
+            origin: 'https://registry.example.test',
+            protocols: ['x402'],
+            description: 'Binary test registry entry',
+          },
+        ]));
+        return;
+      }
+
+      res.writeHead(404);
+      res.end();
+    });
+
+    await new Promise<void>((resolve) => registry.listen(0, '127.0.0.1', () => resolve()));
+    const address = registry.address();
+    const port = typeof address === 'object' && address ? address.port : 0;
+
+    try {
+      const result = await runMindwallet({
+        args: ['search', 'registry', '--protocol', 'x402'],
+        env: {
+          ...process.env,
+          MINDWALLET_REGISTRY_URL: `http://127.0.0.1:${port}`,
+        },
+      });
+
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('https://registry.example.test');
+      expect(result.stdout).toContain('x402');
+    } finally {
+      await new Promise<void>((resolve, reject) =>
+        registry.close((error) => (error ? reject(error) : resolve())),
+      );
+    }
+  });
+});

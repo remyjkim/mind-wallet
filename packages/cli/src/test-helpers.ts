@@ -2,8 +2,13 @@
 // ABOUTME: Provides a local SIWX test server and OWS vault setup helpers
 
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import { createWallet } from '@open-wallet-standard/core';
 import { startTestServer, type TestServerHandle } from '@mindwallet/test-server';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import type { MindwalletConfig } from './config.js';
+import { makeTempConfigHome, writeMindwalletConfig } from './cli-binary-test-helpers.js';
 
 export const TEST_PRIVATE_KEY =
   '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80' as const;
@@ -78,4 +83,31 @@ export async function startLocalPaymentTestServer(): Promise<TestServerHandle> {
     mppRecipient: '0x0000000000000000000000000000000000000001',
     mppWaitForConfirmation: false,
   });
+}
+
+export interface TempOwsFixture {
+  home: string;
+  vaultPath: string;
+  walletId: string;
+  configPath: string;
+}
+
+export function createTempOwsFixture(overrides: Partial<MindwalletConfig> = {}): TempOwsFixture {
+  const home = makeTempConfigHome();
+  const walletId = overrides.walletId ?? 'default';
+  const vaultPath = overrides.vaultPath ?? mkdtempSync(join(tmpdir(), 'mw-ows-vault-'));
+
+  createWallet(walletId, undefined, 12, vaultPath);
+  const configPath = writeMindwalletConfig(home, {
+    walletId,
+    vaultPath,
+    ...overrides,
+  });
+
+  return {
+    home,
+    vaultPath,
+    walletId,
+    configPath,
+  };
 }
