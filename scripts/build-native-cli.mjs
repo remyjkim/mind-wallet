@@ -5,6 +5,7 @@ import { execFileSync } from 'node:child_process';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(scriptDir, '..');
+const buildLockDir = join(repoRoot, 'packages', 'cli', '.build-lock');
 const cliPackageJsonPath = join(repoRoot, 'packages', 'cli', 'package.json');
 const cliPackageJson = JSON.parse(readFileSync(cliPackageJsonPath, 'utf8'));
 
@@ -38,7 +39,7 @@ if (!config) {
 }
 
 const outDir = join(repoRoot, 'dist', 'native', target);
-const binaryPath = join(outDir, 'mindwallet');
+const binaryPath = join(outDir, 'mindpass');
 const addonOutDir = join(outDir, 'ows');
 const addonSourcePath = join(repoRoot, 'node_modules', ...config.addonPackageDir.split('/'), config.addonFilename);
 
@@ -48,42 +49,44 @@ if (!existsSync(addonSourcePath)) {
   );
 }
 
-rmSync(outDir, { recursive: true, force: true });
-mkdirSync(addonOutDir, { recursive: true });
+await withBuildLock(async () => {
+  rmSync(outDir, { recursive: true, force: true });
+  mkdirSync(addonOutDir, { recursive: true });
 
-for (const pkg of ['@mindwallet/core', '@mindwallet/protocols', '@mindwallet/discovery', 'mindwallet']) {
+  for (const pkg of ['@mindpass/core', '@mindpass/protocols', '@mindpass/discovery', 'mindpass-cli']) {
+    execFileSync(
+      'bun',
+      ['run', '--filter', pkg, 'build'],
+      {
+        cwd: repoRoot,
+        stdio: 'inherit',
+        env: process.env,
+      },
+    );
+  }
+
   execFileSync(
     'bun',
-    ['run', '--filter', pkg, 'build'],
+    [
+      'build',
+      '--compile',
+      `--target=${config.bunTarget}`,
+      '--define',
+      `__MINDPASS_VERSION__=${JSON.stringify(cliPackageJson.version)}`,
+      'packages/cli/dist/cli.js',
+      '--outfile',
+      binaryPath,
+    ],
     {
       cwd: repoRoot,
       stdio: 'inherit',
-      env: process.env,
+      env: {
+        ...process.env,
+        MINDPASS_VERSION: cliPackageJson.version,
+      },
     },
   );
-}
-
-execFileSync(
-  'bun',
-  [
-    'build',
-    '--compile',
-    `--target=${config.bunTarget}`,
-    '--define',
-    `__MINDWALLET_VERSION__=${JSON.stringify(cliPackageJson.version)}`,
-    'packages/cli/dist/cli.js',
-    '--outfile',
-    binaryPath,
-  ],
-  {
-    cwd: repoRoot,
-    stdio: 'inherit',
-    env: {
-      ...process.env,
-      MINDWALLET_VERSION: cliPackageJson.version,
-    },
-  },
-);
+});
 
 cpSync(addonSourcePath, join(addonOutDir, config.addonFilename));
 
@@ -91,11 +94,11 @@ writeFileSync(
   join(outDir, 'metadata.json'),
   JSON.stringify(
     {
-      name: 'mindwallet',
+      name: 'mindpass',
       version: cliPackageJson.version,
       target,
       bunTarget: config.bunTarget,
-      binary: 'mindwallet',
+      binary: 'mindpass',
       addon: join('ows', config.addonFilename),
     },
     null,
@@ -119,4 +122,28 @@ function parseTarget(argv) {
   }
 
   throw new Error(`Unsupported host platform for default target: ${platform}-${arch}`);
+}
+
+async function withBuildLock(fn) {
+  while (true) {
+    try {
+      mkdirSync(buildLockDir);
+      break;
+    } catch (error) {
+      if (error.code !== 'EEXIST') {
+        throw error;
+      }
+      await sleep(100);
+    }
+  }
+
+  try {
+    return await fn();
+  } finally {
+    rmSync(buildLockDir, { recursive: true, force: true });
+  }
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

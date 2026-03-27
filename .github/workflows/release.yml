@@ -31,7 +31,7 @@ jobs:
       - run: bun run native:build --target ${{ matrix.target }}
       - uses: actions/upload-artifact@v4
         with:
-          name: mindwallet-${{ matrix.target }}
+          name: mindpass-${{ matrix.target }}
           path: dist/native/${{ matrix.target }}
 
   publish-release:

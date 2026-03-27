@@ -4,14 +4,14 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 TMPDIR="$(mktemp -d)"
 VERSION="$(node -p "require('$ROOT/packages/cli/package.json').version")"
-ARCHIVE="$TMPDIR/mindwallet-$VERSION.tar.gz"
-TAP_NAME="local/mindwallet-test-$$"
-TAP_DIR="$(brew --repository)/Library/Taps/local/homebrew-mindwallet-test-$$"
+ARCHIVE="$TMPDIR/mindpass-$VERSION.tar.gz"
+TAP_NAME="local/mindpass-test-$$"
+TAP_DIR="$(brew --repository)/Library/Taps/local/homebrew-mindpass-test-$$"
 
 cleanup() {
   rm -rf "$TMPDIR"
-  if brew list --formula mindwallet >/dev/null 2>&1; then
-    brew uninstall --force mindwallet >/dev/null 2>&1 || true
+  if brew list --formula mindpass >/dev/null 2>&1; then
+    brew uninstall --force mindpass >/dev/null 2>&1 || true
   fi
   if brew tap | grep -qx "$TAP_NAME"; then
     brew untap "$TAP_NAME" >/dev/null 2>&1 || true
@@ -42,9 +42,9 @@ node "$ROOT/scripts/homebrew/publish-tap.mjs" \
   --sha256 "$SHA256" \
   --tap-path "$TAP_DIR"
 
-brew uninstall --force mindwallet >/dev/null 2>&1 || true
-brew install --build-from-source "$TAP_NAME/mindwallet"
+brew uninstall --force mindpass >/dev/null 2>&1 || true
+brew install --build-from-source "$TAP_NAME/mindpass"
 
-mindwallet --version
-mindwallet help
-brew test mindwallet
+mindpass --version
+mindpass help
+brew test mindpass

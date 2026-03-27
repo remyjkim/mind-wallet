@@ -27,10 +27,10 @@ try {
   console.log(`  Private key: ${privateKeyHex}`);
   console.log('');
   console.log('Run x402 integration test:');
-  console.log(`  RUN_INTEGRATION_TESTS=1 TEST_PRIVATE_KEY=${privateKeyHex} bun run --filter @mindwallet/protocols test`);
+  console.log(`  RUN_INTEGRATION_TESTS=1 TEST_PRIVATE_KEY=${privateKeyHex} bun run --filter @mindpass/protocols test`);
   console.log('');
   console.log('Run Tempo integration test (also needs Moderato RPC):');
-  console.log(`  RUN_INTEGRATION_TESTS=1 TEST_PRIVATE_KEY=${privateKeyHex} TEMPO_RPC_URL=https://rpc.moderato.tempo.xyz bun run --filter @mindwallet/protocols test`);
+  console.log(`  RUN_INTEGRATION_TESTS=1 TEST_PRIVATE_KEY=${privateKeyHex} TEMPO_RPC_URL=https://rpc.moderato.tempo.xyz bun run --filter @mindpass/protocols test`);
   console.log('');
 } finally {
   rmSync(vaultPath, { recursive: true, force: true });
