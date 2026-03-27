@@ -11,23 +11,27 @@ Set your private key and go:
 ```bash
 export MINDWALLET_PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 mindwallet fetch https://api.example.com/paid-endpoint
+mindwallet discover https://api.example.com/paid-endpoint --json
 ```
 
 This enables all three protocols (x402, Tempo, SIWX) with an implicit x402 preference.
 
 ## OWS Vault Mode (production)
 
-Create a wallet, generate an agent key, then fetch:
+Use an existing OWS vault or the bootstrap example, then inspect the wallet and generate an agent key:
 
 ```bash
-# Create a new OWS wallet
-mindwallet wallet create
+# From an existing OWS vault
+mindwallet wallet
+mindwallet key create my-agent
+```
 
-# Generate a scoped agent key for payments
-mindwallet key create --name my-agent --chains eip155:8453,eip155:65536
+For a disposable local setup, use the runnable example in `examples/ows`:
 
-# Fetch a paid endpoint
-mindwallet fetch https://api.example.com/paid-endpoint
+```bash
+cd examples/ows
+bun run bootstrap
+bun run start
 ```
 
 ## MCP Server (for AI agents)
@@ -35,7 +39,7 @@ mindwallet fetch https://api.example.com/paid-endpoint
 Start the MCP server so your AI agent can make paid requests:
 
 ```bash
-mindwallet serve --transport stdio
+mindwallet mcp
 ```
 
 The server exposes two tools:

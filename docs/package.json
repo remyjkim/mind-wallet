@@ -9,7 +9,8 @@
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "check": "bun run typecheck && bun run build"
   },
   "dependencies": {
     "@docusaurus/core": "3.9.2",

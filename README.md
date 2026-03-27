@@ -50,18 +50,23 @@ npm install -g mindwallet
 # Private key mode (fastest — one env var, all protocols enabled)
 export MINDWALLET_PRIVATE_KEY=0x...
 mindwallet fetch https://paid-api.example.com/data
+mindwallet discover https://paid-api.example.com/data --json
 
-# OWS vault mode (production custody)
-mindwallet wallet create
-mindwallet key create --name my-agent
-mindwallet fetch https://paid-api.example.com/data
+# Inspect an existing OWS vault
+mindwallet wallet
+
+# Create an OWS API key from an existing vault
+mindwallet key create my-agent
+
+# Check the installed CLI version
+mindwallet --version
 ```
 
 ### MCP Server (for AI agents)
 
 ```bash
 # Expose mindwallet as MCP tools for your AI agent
-mindwallet serve --transport stdio
+mindwallet mcp
 ```
 
 Tools: `fetch_with_payment`, `probe_origin`
@@ -154,6 +159,32 @@ export MINDWALLET_RPC_TEMPO=https://rpc.mainnet.tempo.xyz
 
 Resolution order: **env vars > config file > defaults**. See the [env vars guide](docs/docs/guides/env-vars.md) for the full reference.
 
+## Onboarding Paths
+
+### Private key CLI
+
+- Install `mindwallet`
+- Set `MINDWALLET_PRIVATE_KEY`
+- Run `mindwallet fetch <url>` or `mindwallet pay <url>`
+
+### OWS setup
+
+- Use an existing OWS vault, or bootstrap the repo example in [`examples/ows`](examples/ows)
+- Point the CLI at that vault with `CONFIG_PATH` or `MINDWALLET_WALLET_ID` / `MINDWALLET_VAULT_PATH`
+- Run `mindwallet wallet` and `mindwallet key create <name>`
+
+### MCP usage
+
+- Start the stdio MCP server with `mindwallet mcp`
+- Use the exposed `fetch_with_payment` and `probe_origin` tools from your MCP client
+
+## Project Files
+
+- [Contributing guide](CONTRIBUTING.md)
+- [Security policy](SECURITY.md)
+- [Code of conduct](CODE_OF_CONDUCT.md)
+- [Changelog](CHANGELOG.md)
+
 ## Policy Rules
 
 Control what your agent is allowed to spend:
@@ -179,19 +210,19 @@ mindwallet's policy engine is designed for extension. Future capabilities includ
 
 ```bash
 # Install dependencies
-pnpm install
+bun install
 
 # Build all packages
-pnpm build
+bun run build
 
 # Run all tests
-pnpm test
+bun run test
 
 # Typecheck
-pnpm typecheck
+bun run typecheck
 
 # Run docs site locally
-cd docs && npm install && npm start
+cd docs && bun run start
 ```
 
 ## License

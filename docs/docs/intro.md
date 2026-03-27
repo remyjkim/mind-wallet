@@ -38,8 +38,7 @@ npm install -g mindwallet
 export MINDWALLET_PRIVATE_KEY=0x...
 mindwallet fetch https://api.example.com/paid-endpoint
 
-# Or use with OWS vault (production)
-mindwallet wallet create
-mindwallet key create
-mindwallet fetch https://api.example.com/paid-endpoint
+# Or inspect an existing OWS vault
+mindwallet wallet
+mindwallet key create my-agent
 ```
