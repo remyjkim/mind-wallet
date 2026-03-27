@@ -22,11 +22,10 @@ export async function fetchCommand(
   config: MindwalletConfig,
   options: FetchCommandOptions = {},
 ): Promise<void> {
-  const passphrase = config.passphrase ?? process.env['OWS_PASSPHRASE'];
   const wallet = new OwsWalletAdapter({
     walletId: config.walletId,
     vaultPath: config.vaultPath,
-    passphrase,
+    passphrase: config.passphrase,
   });
 
   const state = createMemoryStore();
