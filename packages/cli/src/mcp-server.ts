@@ -10,14 +10,13 @@ import { probeOrigin } from '@mindwallet/discovery';
 import type { MindwalletConfig } from './config.js';
 
 /**
- * Creates and starts an MCP server that exposes mindwallet tools over stdio.
+ * Creates an MCP server with mindwallet tools registered but no transport connected.
  */
-export async function startMcpServer(config: MindwalletConfig): Promise<void> {
-  const passphrase = config.passphrase ?? process.env['OWS_PASSPHRASE'];
+export function createMcpServer(config: MindwalletConfig): McpServer {
   const wallet = new OwsWalletAdapter({
     walletId: config.walletId,
     vaultPath: config.vaultPath,
-    passphrase,
+    passphrase: config.passphrase,
   });
 
   const methods = [createSiwxMethod()];
@@ -103,6 +102,14 @@ export async function startMcpServer(config: MindwalletConfig): Promise<void> {
     },
   );
 
+  return server;
+}
+
+/**
+ * Creates and starts an MCP server that exposes mindwallet tools over stdio.
+ */
+export async function startMcpServer(config: MindwalletConfig): Promise<void> {
+  const server = createMcpServer(config);
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }
