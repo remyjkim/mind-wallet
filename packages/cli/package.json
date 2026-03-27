@@ -1,7 +1,35 @@
 {
   "name": "mindwallet",
   "version": "0.1.1",
+  "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/remyjkim/mind-wallet.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/remyjkim/mind-wallet#readme",
+  "bugs": {
+    "url": "https://github.com/remyjkim/mind-wallet/issues"
+  },
+  "keywords": [
+    "http-402",
+    "payments",
+    "agents",
+    "mcp",
+    "cli",
+    "wallet",
+    "x402",
+    "siwx",
+    "tempo"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "bin": {
     "mindwallet": "dist/cli.js"
   },
@@ -15,7 +43,10 @@
     "build": "tsup",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "check": "pnpm typecheck && pnpm build && pnpm test"
+    "check": "bun run typecheck && bun run build && bun run test"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "@mindwallet/core": "workspace:*",

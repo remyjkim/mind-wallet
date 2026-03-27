@@ -13,7 +13,7 @@
     "build": "tsup",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "check": "pnpm typecheck && pnpm build"
+    "check": "bun run typecheck && bun run build"
   },
   "dependencies": {
     "hono": "^4.12.0",
