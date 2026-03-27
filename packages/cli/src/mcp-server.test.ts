@@ -11,63 +11,20 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { createMcpServer } from './mcp-server.js';
 import type { MindwalletConfig } from './config.js';
+import { startSiwxTestServer, type SiwxTestServer } from './test-helpers.js';
 
 const skip = !process.env['RUN_INTEGRATION_TESTS'] || !process.env['OWS_PASSPHRASE'];
 
 // ---------------------------------------------------------------------------
-// Local SIWX test server
+// Error server (unique to this test file)
 // ---------------------------------------------------------------------------
 
-interface ServerState {
+interface ErrorServerState {
   port: number;
   close: () => Promise<void>;
 }
 
-function startTestServer(): Promise<ServerState> {
-  const server = createServer((req: IncomingMessage, res: ServerResponse) => {
-    const authorization = req.headers['authorization'];
-
-    if (!authorization) {
-      const challenge = {
-        domain: 'localhost',
-        walletId: 'test-wallet',
-        chainId: 'eip155:8453',
-        nonce: `nonce-${Date.now()}`,
-      };
-
-      res.writeHead(402, {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-store',
-      });
-      res.end(
-        JSON.stringify({
-          error: 'payment_required',
-          extensions: {
-            'sign-in-with-x': challenge,
-          },
-        }),
-      );
-      return;
-    }
-
-    res.writeHead(200, {
-      'Content-Type': 'application/json',
-    });
-    res.end(JSON.stringify({ data: 'protected content' }));
-  });
-
-  return new Promise((resolve) => {
-    server.listen(0, '127.0.0.1', () => {
-      const addr = server.address() as { port: number };
-      resolve({
-        port: addr.port,
-        close: () => new Promise<void>((r) => server.close(() => r())),
-      });
-    });
-  });
-}
-
-function startErrorServer(): Promise<ServerState> {
+function startErrorServer(): Promise<ErrorServerState> {
   const server = createServer((_req: IncomingMessage, res: ServerResponse) => {
     res.writeHead(500, { 'Content-Type': 'text/plain' });
     res.end('Internal Server Error');
@@ -89,13 +46,13 @@ function startErrorServer(): Promise<ServerState> {
 // ---------------------------------------------------------------------------
 
 describe.skipIf(skip)('MCP server tools: SIWX 402 integration (local server)', () => {
-  let srv: ServerState;
-  let errSrv: ServerState;
+  let srv: SiwxTestServer;
+  let errSrv: ErrorServerState;
   let vaultPath: string;
   let client: Client;
 
   beforeAll(async () => {
-    srv = await startTestServer();
+    srv = await startSiwxTestServer();
     errSrv = await startErrorServer();
 
     vaultPath = mkdtempSync(join(tmpdir(), 'mw-mcp-test-'));
@@ -124,7 +81,7 @@ describe.skipIf(skip)('MCP server tools: SIWX 402 integration (local server)', (
   it('fetch_with_payment resolves SIWX 402 and returns response', async () => {
     const result = await client.callTool({
       name: 'fetch_with_payment',
-      arguments: { url: `http://127.0.0.1:${srv.port}/data` },
+      arguments: { url: `${srv.url}/data` },
     });
     const text = (result.content as Array<{ type: string; text: string }>)[0].text;
     expect(text).toContain('protected content');
@@ -144,7 +101,7 @@ describe.skipIf(skip)('MCP server tools: SIWX 402 integration (local server)', (
   it('probe_origin detects SIWX payment requirement', async () => {
     const result = await client.callTool({
       name: 'probe_origin',
-      arguments: { url: `http://127.0.0.1:${srv.port}/data` },
+      arguments: { url: `${srv.url}/data` },
     });
     const parsed = JSON.parse((result.content as Array<{ type: string; text: string }>)[0].text);
     expect(parsed.requires402).toBe(true);
