@@ -38,3 +38,6 @@ Thumbs.db
 
 # Vitest
 .vitest/
+
+# Docusaurus
+.docusaurus/
