@@ -2,8 +2,8 @@
 // ABOUTME: Probes the URL first, then selects and executes the best payment method
 
 import { probeOrigin } from '@mindwallet/discovery';
-import { createSiwxMethod } from '@mindwallet/protocols';
-import { wrapFetch, createMemoryStore, createRouter, OwsWalletAdapter } from '@mindwallet/core';
+import { wrapFetch } from '@mindwallet/core';
+import { routerFromConfig } from '../router-from-config.js';
 import type { MindwalletConfig } from '../config.js';
 
 export interface PayCommandOptions {
@@ -19,15 +19,7 @@ export async function payCommand(
   config: MindwalletConfig,
   options: PayCommandOptions = {},
 ): Promise<void> {
-  const wallet = new OwsWalletAdapter({
-    walletId: config.walletId,
-    vaultPath: config.vaultPath,
-    passphrase: config.passphrase,
-  });
-
-  const methods = [createSiwxMethod()];
-  const state = createMemoryStore();
-  const router = createRouter({ methods, state, policy: [] });
+  const { router, wallet, state, methods } = routerFromConfig(config);
 
   // Probe first so we can show what's required
   const probe = await probeOrigin(url, methods);

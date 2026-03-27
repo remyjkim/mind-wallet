@@ -7,6 +7,8 @@ import {
   createRouter,
   type MindRouter,
   type PolicyRule,
+  type RouterMethod,
+  type RouterStateStore,
 } from '@mindwallet/core';
 import { createSiwxMethod } from '@mindwallet/protocols';
 import type { MindwalletConfig, PolicyRuleConfig } from './config.js';
@@ -37,25 +39,29 @@ export function convertPolicy(rules: PolicyRuleConfig[] | undefined): PolicyRule
  * Tempo and x402 methods require viem accounts and RPC URLs which are
  * provisioned at runtime.  SIWX is always included.
  */
-export function routerFromConfig(config: MindwalletConfig): {
+export interface RouterContext {
   router: MindRouter;
   wallet: OwsWalletAdapter;
-} {
+  state: RouterStateStore;
+  methods: RouterMethod[];
+}
+
+export function routerFromConfig(config: MindwalletConfig): RouterContext {
   const wallet = new OwsWalletAdapter({
     walletId: config.walletId,
     vaultPath: config.vaultPath,
     passphrase: config.passphrase,
   });
 
+  const methods = [createSiwxMethod()];
   const state = createMemoryStore();
-
   const policy = convertPolicy(config.policy);
 
   const router = createRouter({
-    methods: [createSiwxMethod()],
+    methods,
     state,
     policy,
   });
 
-  return { router, wallet };
+  return { router, wallet, state, methods };
 }

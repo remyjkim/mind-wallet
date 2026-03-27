@@ -4,24 +4,16 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
-import { wrapFetch, createMemoryStore, createRouter, OwsWalletAdapter } from '@mindwallet/core';
-import { createSiwxMethod } from '@mindwallet/protocols';
+import { wrapFetch } from '@mindwallet/core';
 import { probeOrigin } from '@mindwallet/discovery';
+import { routerFromConfig } from './router-from-config.js';
 import type { MindwalletConfig } from './config.js';
 
 /**
  * Creates an MCP server with mindwallet tools registered but no transport connected.
  */
 export function createMcpServer(config: MindwalletConfig): McpServer {
-  const wallet = new OwsWalletAdapter({
-    walletId: config.walletId,
-    vaultPath: config.vaultPath,
-    passphrase: config.passphrase,
-  });
-
-  const methods = [createSiwxMethod()];
-  const state = createMemoryStore();
-  const router = createRouter({ methods, state, policy: [] });
+  const { router, wallet, state, methods } = routerFromConfig(config);
   const fetch = wrapFetch({ fetch: globalThis.fetch, router, state, wallet });
 
   const server = new McpServer({

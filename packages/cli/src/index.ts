@@ -4,6 +4,7 @@
 export { loadConfig, saveConfig, configPath } from './config.js';
 export type { MindwalletConfig, PolicyRuleConfig } from './config.js';
 export { routerFromConfig } from './router-from-config.js';
+export type { RouterContext } from './router-from-config.js';
 export { createMcpServer, startMcpServer } from './mcp-server.js';
 export { discoverCommand } from './commands/discover.js';
 export type { DiscoverCommandOptions } from './commands/discover.js';

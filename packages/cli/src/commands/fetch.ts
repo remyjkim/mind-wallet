@@ -1,10 +1,8 @@
 // ABOUTME: CLI command that fetches a URL with automatic 402 payment handling
 // ABOUTME: Outputs the response body to stdout and payment details to stderr
 
-import { wrapFetch, createMemoryStore } from '@mindwallet/core';
-import { createSiwxMethod } from '@mindwallet/protocols';
-import { createRouter } from '@mindwallet/core';
-import { OwsWalletAdapter } from '@mindwallet/core';
+import { wrapFetch } from '@mindwallet/core';
+import { routerFromConfig } from '../router-from-config.js';
 import type { MindwalletConfig } from '../config.js';
 
 export interface FetchCommandOptions {
@@ -22,19 +20,7 @@ export async function fetchCommand(
   config: MindwalletConfig,
   options: FetchCommandOptions = {},
 ): Promise<void> {
-  const wallet = new OwsWalletAdapter({
-    walletId: config.walletId,
-    vaultPath: config.vaultPath,
-    passphrase: config.passphrase,
-  });
-
-  const state = createMemoryStore();
-  const router = createRouter({
-    methods: [createSiwxMethod()],
-    state,
-    policy: [],
-  });
-
+  const { router, wallet, state } = routerFromConfig(config);
   const fetch = wrapFetch({ fetch: globalThis.fetch, router, state, wallet });
 
   const init: RequestInit = {
