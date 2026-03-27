@@ -1,8 +1,8 @@
-// ABOUTME: Public API surface for mindwallet CLI package
+// ABOUTME: Public API surface for mindpass CLI package
 // ABOUTME: Re-exports router factory and configuration helpers
 
 export { loadConfig, saveConfig, configPath, resolveConfig, readEnvOverrides } from './config.js';
-export type { MindwalletConfig, PolicyRuleConfig } from './config.js';
+export type { MindpassConfig, PolicyRuleConfig } from './config.js';
 export { routerFromConfig } from './router-from-config.js';
 export type { RouterContext } from './router-from-config.js';
 export { createMcpServer, startMcpServer } from './mcp-server.js';

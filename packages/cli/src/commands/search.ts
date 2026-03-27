@@ -1,7 +1,7 @@
 // ABOUTME: CLI command that searches the Bazaar registry for payment-gated origins
 // ABOUTME: Outputs matching origins with their supported protocols
 
-import { searchRegistry } from '@mindwallet/discovery';
+import { searchRegistry } from '@mindpass/discovery';
 
 export interface SearchCommandOptions {
   protocol?: string;

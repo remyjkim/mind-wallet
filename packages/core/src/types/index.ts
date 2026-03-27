@@ -1,5 +1,5 @@
-// ABOUTME: Re-exports all types from @mindwallet/core
-// ABOUTME: Consumers import from '@mindwallet/core' not from sub-paths
+// ABOUTME: Re-exports all types from @mindpass/core
+// ABOUTME: Consumers import from '@mindpass/core' not from sub-paths
 
 export type { WalletAdapter, WalletAccount, SignRequest, MessageRequest } from './wallet.js';
 export type { Protocol, NormalizedPayment, PaymentCandidate } from './challenge.js';

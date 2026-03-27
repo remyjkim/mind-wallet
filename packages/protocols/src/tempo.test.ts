@@ -3,8 +3,8 @@
 
 import { describe, it, expect } from 'vitest';
 import { createTempoMethod } from './tempo.js';
-import { createMemoryStore } from '@mindwallet/core';
-import type { PaymentCandidate } from '@mindwallet/core';
+import { createMemoryStore } from '@mindpass/core';
+import type { PaymentCandidate } from '@mindpass/core';
 
 function makeAccount() {
   return {

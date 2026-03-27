@@ -1,4 +1,4 @@
-// ABOUTME: Loads and saves the mindwallet CLI configuration from ~/.config/mindwallet/config.json
+// ABOUTME: Loads and saves the mindpass CLI configuration from ~/.config/mindpass/config.json
 // ABOUTME: Provides typed access to wallet, policy, and RPC settings
 
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
@@ -14,7 +14,7 @@ export interface PolicyRuleConfig {
   boost?: number;
 }
 
-export interface MindwalletConfig {
+export interface MindpassConfig {
   /** OWS wallet name/ID to use for signing. Defaults to "default". */
   walletId?: string;
   /** Path to the OWS vault directory. Defaults to ~/.minds/wallet/vault. */
@@ -33,53 +33,78 @@ export interface MindwalletConfig {
   rpcUrls?: Record<string, string>;
 }
 
-const DEFAULT_CONFIG_DIR = join(homedir(), '.config', 'mindwallet');
-const DEFAULT_CONFIG_PATH = join(DEFAULT_CONFIG_DIR, 'config.json');
+function homeDirectory(): string {
+  return process.env['HOME'] ?? homedir();
+}
+
+function defaultConfigDir(): string {
+  return join(homeDirectory(), '.config', 'mindpass');
+}
+
+function legacyConfigPath(): string {
+  return join(homeDirectory(), '.config', 'mindpass', 'config.json');
+}
+
+function readCompatEnv(name: string): string | undefined {
+  return process.env[`MINDPASS_${name}`];
+}
 
 /**
  * Returns the config file path, using CONFIG_PATH env var if set.
  */
 export function configPath(): string {
-  return process.env['CONFIG_PATH'] ?? DEFAULT_CONFIG_PATH;
+  return process.env['CONFIG_PATH'] ?? join(defaultConfigDir(), 'config.json');
 }
 
 /**
- * Loads the mindwallet config from disk.  Throws if the file is missing or
+ * Loads the mindpass config from disk. Throws if the file is missing or
  * malformed — callers are expected to handle this at startup.
  */
-export function loadConfig(path: string = configPath()): MindwalletConfig {
+export function loadConfig(path: string = configPath()): MindpassConfig {
   let raw: string;
   try {
     raw = readFileSync(path, 'utf8');
   } catch (err: unknown) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
-      return {} as MindwalletConfig;
+      if (process.env['CONFIG_PATH'] === undefined && path === configPath()) {
+        try {
+          raw = readFileSync(legacyConfigPath(), 'utf8');
+        } catch (legacyErr: unknown) {
+          if ((legacyErr as NodeJS.ErrnoException).code === 'ENOENT') {
+            return {} as MindpassConfig;
+          }
+          throw legacyErr;
+        }
+      } else {
+        return {} as MindpassConfig;
+      }
+    } else {
+      throw err;
     }
-    throw err;
   }
-  return JSON.parse(raw) as MindwalletConfig;
+  return JSON.parse(raw) as MindpassConfig;
 }
 
 /**
  * Writes a config object to disk, creating the directory if needed.
  */
-export function saveConfig(config: MindwalletConfig, path: string = configPath()): void {
+export function saveConfig(config: MindpassConfig, path: string = configPath()): void {
   const dir = join(path, '..');
   mkdirSync(dir, { recursive: true });
   writeFileSync(path, JSON.stringify(config, null, 2) + '\n', 'utf8');
 }
 
 /**
- * Reads MINDWALLET_* environment variables and returns a partial config.
+ * Reads MINDPASS_* environment variables.
  * Only set variables appear in the result — unset variables are omitted.
  */
-export function readEnvOverrides(): Partial<MindwalletConfig> {
-  const overrides: Partial<MindwalletConfig> = {};
+export function readEnvOverrides(): Partial<MindpassConfig> {
+  const overrides: Partial<MindpassConfig> = {};
 
-  const privateKey = process.env['MINDWALLET_PRIVATE_KEY'];
+  const privateKey = readCompatEnv('PRIVATE_KEY');
   if (privateKey) overrides.privateKey = privateKey as `0x${string}`;
 
-  const chainIds = process.env['MINDWALLET_CHAIN_IDS'];
+  const chainIds = readCompatEnv('CHAIN_IDS');
   if (chainIds) {
     overrides.chainIds = chainIds
       .split(',')
@@ -87,19 +112,19 @@ export function readEnvOverrides(): Partial<MindwalletConfig> {
       .filter(Boolean);
   }
 
-  const walletId = process.env['MINDWALLET_WALLET_ID'];
+  const walletId = readCompatEnv('WALLET_ID');
   if (walletId) overrides.walletId = walletId;
 
-  const vaultPath = process.env['MINDWALLET_VAULT_PATH'];
+  const vaultPath = readCompatEnv('VAULT_PATH');
   if (vaultPath) overrides.vaultPath = vaultPath;
 
-  const tempoGas = process.env['MINDWALLET_TEMPO_GAS'];
+  const tempoGas = readCompatEnv('TEMPO_GAS');
   if (tempoGas) overrides.tempoGas = tempoGas;
 
   const rpcUrls: Record<string, string> = {};
-  const rpcBase = process.env['MINDWALLET_RPC_BASE'];
+  const rpcBase = readCompatEnv('RPC_BASE');
   if (rpcBase) rpcUrls['base'] = rpcBase;
-  const rpcTempo = process.env['MINDWALLET_RPC_TEMPO'];
+  const rpcTempo = readCompatEnv('RPC_TEMPO');
   if (rpcTempo) rpcUrls['tempo'] = rpcTempo;
   if (Object.keys(rpcUrls).length > 0) overrides.rpcUrls = rpcUrls;
 
@@ -110,7 +135,7 @@ export function readEnvOverrides(): Partial<MindwalletConfig> {
  * Resolves the final config by merging: env vars > config file > defaults.
  * Config file is optional — returns {} on ENOENT.
  */
-export function resolveConfig(): MindwalletConfig {
+export function resolveConfig(): MindpassConfig {
   const file = loadConfig();
   const env = readEnvOverrides();
   return { ...file, ...env };

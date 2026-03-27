@@ -1,8 +1,8 @@
 // ABOUTME: CLI command that probes an HTTP origin to discover its payment requirements
 // ABOUTME: Outputs protocol, method, intent, and amount for each detected candidate
 
-import { probeOrigin } from '@mindwallet/discovery';
-import type { RouterMethod } from '@mindwallet/core';
+import { probeOrigin } from '@mindpass/discovery';
+import type { RouterMethod } from '@mindpass/core';
 
 export interface DiscoverCommandOptions {
   methods: RouterMethod[];

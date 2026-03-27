@@ -11,8 +11,9 @@ export default defineConfig({
   clean: true,
   outDir: 'dist',
   define: {
-    __MINDWALLET_VERSION__: JSON.stringify(packageVersion),
+    __MINDPASS_VERSION__: JSON.stringify(packageVersion),
   },
+  noExternal: ['@mindpass/core', '@mindpass/discovery', '@mindpass/protocols'],
   // Native NAPI-RS bindings must not be bundled
   external: ['@open-wallet-standard/core'],
 });

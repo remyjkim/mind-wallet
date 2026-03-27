@@ -1,4 +1,4 @@
-// ABOUTME: Public API surface for @mindwallet/protocols
+// ABOUTME: Public API surface for @mindpass/protocols
 // ABOUTME: Re-exports all concrete RouterMethod factory functions
 
 export { createTempoMethod } from './tempo.js';

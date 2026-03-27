@@ -8,8 +8,8 @@
     "check": "node --test"
   },
   "dependencies": {
-    "@mindwallet/core": "workspace:*",
+    "@mindpass/core": "workspace:*",
     "@open-wallet-standard/core": "^1.0.0",
-    "mindwallet": "workspace:*"
+    "mindpass-cli": "workspace:*"
   }
 }

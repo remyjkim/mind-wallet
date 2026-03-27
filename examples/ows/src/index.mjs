@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import { loadConfig, configPath, routerFromConfig } from 'mindwallet';
+import { loadConfig, configPath, routerFromConfig } from 'mindpass';
 
 function loadEnvFile(path) {
   let text = '';
@@ -44,7 +44,7 @@ export async function run(options = {}) {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const summary = await run();
-  console.log(`Mindwallet OWS example`);
+  console.log(`Mindpass OWS example`);
   console.log(`Wallet:  ${summary.walletId}`);
   console.log(`Address: ${summary.address}`);
   console.log(`Chain:   ${summary.chainId}`);

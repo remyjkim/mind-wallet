@@ -5,6 +5,11 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { searchRegistry } from './registry.js';
 
 describe('searchRegistry', () => {
+  afterEach(() => {
+    delete process.env['MINDPASS_REGISTRY_URL'];
+    delete process.env['MINDPASS_REGISTRY_URL'];
+  });
+
   it('returns empty array on network error', async () => {
     const failFetch = vi.fn().mockRejectedValue(new Error('Network Error'));
     const results = await searchRegistry({}, failFetch);
@@ -61,13 +66,9 @@ describe('searchRegistry', () => {
     );
   });
 
-  describe('MINDWALLET_REGISTRY_URL env var', () => {
-    afterEach(() => {
-      delete process.env['MINDWALLET_REGISTRY_URL'];
-    });
-
-    it('uses MINDWALLET_REGISTRY_URL when no registryUrl option is given', async () => {
-      process.env['MINDWALLET_REGISTRY_URL'] = 'https://my-registry.example.com';
+  describe('registry env vars', () => {
+    it('uses MINDPASS_REGISTRY_URL when no registryUrl option is given', async () => {
+      process.env['MINDPASS_REGISTRY_URL'] = 'https://my-registry.example.com';
       const mockFetch = vi.fn().mockResolvedValue(
         new Response(JSON.stringify([]), { status: 200 }),
       );
@@ -78,8 +79,8 @@ describe('searchRegistry', () => {
       );
     });
 
-    it('options.registryUrl takes precedence over MINDWALLET_REGISTRY_URL', async () => {
-      process.env['MINDWALLET_REGISTRY_URL'] = 'https://env-registry.example.com';
+    it('options.registryUrl takes precedence over MINDPASS_REGISTRY_URL', async () => {
+      process.env['MINDPASS_REGISTRY_URL'] = 'https://env-registry.example.com';
       const mockFetch = vi.fn().mockResolvedValue(
         new Response(JSON.stringify([]), { status: 200 }),
       );
@@ -90,6 +91,30 @@ describe('searchRegistry', () => {
       );
       expect(mockFetch).not.toHaveBeenCalledWith(
         expect.stringContaining('env-registry.example.com'),
+        expect.any(Object),
+      );
+    });
+
+    it('uses MINDPASS_REGISTRY_URL when no registryUrl option is given', async () => {
+      process.env['MINDPASS_REGISTRY_URL'] = 'https://mindpass-registry.example.com';
+      const mockFetch = vi.fn().mockResolvedValue(
+        new Response(JSON.stringify([]), { status: 200 }),
+      );
+      await searchRegistry({}, mockFetch);
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('mindpass-registry.example.com'),
+        expect.any(Object),
+      );
+    });
+
+    it('uses MINDPASS_REGISTRY_URL when set', async () => {
+      process.env['MINDPASS_REGISTRY_URL'] = 'https://mindpass-registry.example.com';
+      const mockFetch = vi.fn().mockResolvedValue(
+        new Response(JSON.stringify([]), { status: 200 }),
+      );
+      await searchRegistry({}, mockFetch);
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('mindpass-registry.example.com'),
         expect.any(Object),
       );
     });

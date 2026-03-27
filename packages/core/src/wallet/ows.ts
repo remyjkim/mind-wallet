@@ -25,7 +25,7 @@ async function loadOwsBindings(): Promise<OwsBindings> {
 }
 
 async function loadOwsBindingsImpl(): Promise<OwsBindings> {
-  const explicitPath = process.env['MINDWALLET_OWS_NATIVE_PATH'];
+  const explicitPath = process.env['MINDPASS_OWS_NATIVE_PATH'];
   const nativePath = explicitPath ?? findColocatedNativeAddon();
   if (nativePath) {
     const require = createRequire(import.meta.url);

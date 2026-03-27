@@ -57,7 +57,7 @@ async function buildCliWithLock(): Promise<string> {
         'bun',
         [
           'run',
-          '--filter', '@mindwallet/core', 'build',
+          '--filter', '@mindpass/core', 'build',
         ],
         {
           cwd: repoRoot,
@@ -73,7 +73,7 @@ async function buildCliWithLock(): Promise<string> {
             'bun',
             [
               'run',
-              '--filter', '@mindwallet/protocols', 'build',
+              '--filter', '@mindpass/protocols', 'build',
             ],
             {
               cwd: repoRoot,
@@ -89,7 +89,7 @@ async function buildCliWithLock(): Promise<string> {
                 'bun',
                 [
                   'run',
-                  '--filter', '@mindwallet/discovery', 'build',
+                  '--filter', '@mindpass/discovery', 'build',
                 ],
                 {
                   cwd: repoRoot,
@@ -105,7 +105,7 @@ async function buildCliWithLock(): Promise<string> {
                     'bun',
                     [
                       'run',
-                      '--filter', 'mindwallet', 'build',
+                      '--filter', 'mindpass-cli', 'build',
                     ],
                     {
                       cwd: repoRoot,
@@ -138,8 +138,8 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function runMindwallet(options: CliRunOptions): Promise<CliRunResult> {
-  const child = await spawnMindwallet(options);
+export async function runMindpass(options: CliRunOptions): Promise<CliRunResult> {
+  const child = await spawnMindpass(options);
 
   return new Promise((resolve, reject) => {
     let stdout = '';
@@ -147,7 +147,7 @@ export async function runMindwallet(options: CliRunOptions): Promise<CliRunResul
     const timeoutMs = options.timeoutMs ?? 10_000;
     const timer = setTimeout(() => {
       child.kill('SIGTERM');
-      reject(new Error(`mindwallet process timed out after ${timeoutMs}ms`));
+      reject(new Error(`mindpass process timed out after ${timeoutMs}ms`));
     }, timeoutMs);
 
     child.stdout.setEncoding('utf8');
@@ -174,7 +174,7 @@ export async function runMindwallet(options: CliRunOptions): Promise<CliRunResul
   });
 }
 
-export async function spawnMindwallet(options: CliRunOptions): Promise<ChildProcessWithoutNullStreams> {
+export async function spawnMindpass(options: CliRunOptions): Promise<ChildProcessWithoutNullStreams> {
   await waitForBuildToSettle();
   const cliPath = await buildCliOnce();
 
@@ -194,20 +194,20 @@ async function waitForBuildToSettle(): Promise<void> {
 }
 
 export function makeTempConfigHome(): string {
-  const home = mkdtempSync(join(tmpdir(), 'mindwallet-cli-home-'));
-  mkdirSync(join(home, '.config', 'mindwallet'), { recursive: true });
+  const home = mkdtempSync(join(tmpdir(), 'mindpass-cli-home-'));
+  mkdirSync(join(home, '.config', 'mindpass'), { recursive: true });
   return home;
 }
 
-export function writeMindwalletConfig(dir: string, config: Record<string, unknown>): string {
-  const path = join(dir, '.config', 'mindwallet', 'config.json');
+export function writeMindpassConfig(dir: string, config: Record<string, unknown>): string {
+  const path = join(dir, '.config', 'mindpass', 'config.json');
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, JSON.stringify(config, null, 2));
   return path;
 }
 
 export function writeRawConfig(dir: string, raw: string): string {
-  const path = join(dir, '.config', 'mindwallet', 'config.json');
+  const path = join(dir, '.config', 'mindpass', 'config.json');
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, raw);
   return path;

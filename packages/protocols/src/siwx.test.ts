@@ -1,7 +1,7 @@
 // packages/protocols/src/siwx.test.ts
 import { describe, it, expect } from 'vitest';
 import { createSiwxMethod } from './siwx.js';
-import type { PaymentCandidate } from '@mindwallet/core';
+import type { PaymentCandidate } from '@mindpass/core';
 
 function makeCandidate(protocol: PaymentCandidate['protocol'] = 'siwx'): PaymentCandidate {
   const method = createSiwxMethod();

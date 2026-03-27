@@ -3,8 +3,8 @@
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createServer } from 'node:http';
-import type { TestServerHandle } from '@mindwallet/test-server';
-import { buildCliOnce, runMindwallet, makeTempConfigHome, writeRawConfig } from './cli-binary-test-helpers.js';
+import type { TestServerHandle } from '@mindpass/test-server';
+import { buildCliOnce, runMindpass, makeTempConfigHome, writeRawConfig } from './cli-binary-test-helpers.js';
 import {
   createTempOwsFixture,
   startLocalPaymentTestServer,
@@ -13,7 +13,7 @@ import {
   type SiwxTestServer,
 } from './test-helpers.js';
 
-describe('mindwallet binary config resolution', () => {
+describe('mindpass binary config resolution', () => {
   let server: TestServerHandle;
   let siwxServer: SiwxTestServer;
 
@@ -28,15 +28,31 @@ describe('mindwallet binary config resolution', () => {
     if (siwxServer) await siwxServer.close();
   });
 
-  it('accepts MINDWALLET_PRIVATE_KEY without a config file for pay flows', async () => {
+  it('accepts MINDPASS_PRIVATE_KEY without a config file for pay flows', async () => {
     const home = makeTempConfigHome();
-    const result = await runMindwallet({
+    const result = await runMindpass({
       args: ['pay', `${server.url}/x402/data`],
       env: {
         ...process.env,
         HOME: home,
-        MINDWALLET_PRIVATE_KEY: TEST_PRIVATE_KEY,
-        MINDWALLET_CHAIN_IDS: 'eip155:84532',
+        MINDPASS_PRIVATE_KEY: TEST_PRIVATE_KEY,
+        MINDPASS_CHAIN_IDS: 'eip155:84532',
+      },
+    });
+
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('paid x402 content');
+  });
+
+  it('accepts MINDPASS_PRIVATE_KEY without a config file for pay flows', async () => {
+    const home = makeTempConfigHome();
+    const result = await runMindpass({
+      args: ['pay', `${server.url}/x402/data`],
+      env: {
+        ...process.env,
+        HOME: home,
+        MINDPASS_PRIVATE_KEY: TEST_PRIVATE_KEY,
+        MINDPASS_CHAIN_IDS: 'eip155:84532',
       },
     });
 
@@ -48,7 +64,7 @@ describe('mindwallet binary config resolution', () => {
     const home = makeTempConfigHome();
     writeRawConfig(home, '{not-json');
 
-    const result = await runMindwallet({
+    const result = await runMindpass({
       args: ['wallet'],
       env: {
         ...process.env,
@@ -63,7 +79,7 @@ describe('mindwallet binary config resolution', () => {
   it('uses a file-backed OWS config for wallet and key flows', async () => {
     const fixture = createTempOwsFixture();
 
-    const walletResult = await runMindwallet({
+    const walletResult = await runMindpass({
       args: ['wallet'],
       env: {
         ...process.env,
@@ -74,7 +90,7 @@ describe('mindwallet binary config resolution', () => {
     expect(walletResult.stdout).toContain('Wallet: default');
     expect(walletResult.stdout).toContain('Accounts (');
 
-    const createResult = await runMindwallet({
+    const createResult = await runMindpass({
       args: ['key', 'create', 'binary-test-key'],
       env: {
         ...process.env,
@@ -86,7 +102,7 @@ describe('mindwallet binary config resolution', () => {
     expect(createResult.stdout).toContain('Key created:');
     expect(createResult.stdout).toContain('Token:');
 
-    const listResult = await runMindwallet({
+    const listResult = await runMindpass({
       args: ['key', 'list'],
       env: {
         ...process.env,
@@ -99,7 +115,7 @@ describe('mindwallet binary config resolution', () => {
     const keyId = createResult.stdout.match(/ID:\s+([^\n]+)/)?.[1];
     expect(keyId).toBeTruthy();
 
-    const revokeResult = await runMindwallet({
+    const revokeResult = await runMindpass({
       args: ['key', 'revoke', keyId!],
       env: {
         ...process.env,
@@ -113,7 +129,7 @@ describe('mindwallet binary config resolution', () => {
   it('supports local OWS SIWX fetch and pay flows through the binary', async () => {
     const fixture = createTempOwsFixture({ walletId: 'test-wallet' });
 
-    const fetchResult = await runMindwallet({
+    const fetchResult = await runMindpass({
       args: ['fetch', `${siwxServer.url}/resource`],
       env: {
         ...process.env,
@@ -123,7 +139,7 @@ describe('mindwallet binary config resolution', () => {
     expect(fetchResult.code).toBe(0);
     expect(fetchResult.stdout).toContain('protected content');
 
-    const payResult = await runMindwallet({
+    const payResult = await runMindpass({
       args: ['pay', `${siwxServer.url}/resource`, '--verbose'],
       env: {
         ...process.env,
@@ -139,25 +155,25 @@ describe('mindwallet binary config resolution', () => {
   it('supports local private-key x402 fetch and pay flows through the binary', async () => {
     const home = makeTempConfigHome();
 
-    const fetchResult = await runMindwallet({
+    const fetchResult = await runMindpass({
       args: ['fetch', `${server.url}/x402/data`],
       env: {
         ...process.env,
         HOME: home,
-        MINDWALLET_PRIVATE_KEY: TEST_PRIVATE_KEY,
-        MINDWALLET_CHAIN_IDS: 'eip155:84532',
+        MINDPASS_PRIVATE_KEY: TEST_PRIVATE_KEY,
+        MINDPASS_CHAIN_IDS: 'eip155:84532',
       },
     });
     expect(fetchResult.code).toBe(0);
     expect(fetchResult.stdout).toContain('paid x402 content');
 
-    const payResult = await runMindwallet({
+    const payResult = await runMindpass({
       args: ['pay', `${server.url}/x402/data`, '--verbose'],
       env: {
         ...process.env,
         HOME: home,
-        MINDWALLET_PRIVATE_KEY: TEST_PRIVATE_KEY,
-        MINDWALLET_CHAIN_IDS: 'eip155:84532',
+        MINDPASS_PRIVATE_KEY: TEST_PRIVATE_KEY,
+        MINDPASS_CHAIN_IDS: 'eip155:84532',
       },
     });
     expect(payResult.code).toBe(0);
@@ -169,13 +185,13 @@ describe('mindwallet binary config resolution', () => {
   it('reports local tempo candidates in verbose pay output through the binary', async () => {
     const home = makeTempConfigHome();
 
-    const result = await runMindwallet({
+    const result = await runMindpass({
       args: ['pay', `${server.url}/mpp/data`, '--verbose'],
       env: {
         ...process.env,
         HOME: home,
-        MINDWALLET_PRIVATE_KEY: TEST_PRIVATE_KEY,
-        MINDWALLET_CHAIN_IDS: 'eip155:8453',
+        MINDPASS_PRIVATE_KEY: TEST_PRIVATE_KEY,
+        MINDPASS_CHAIN_IDS: 'eip155:8453',
       },
     });
 
@@ -184,7 +200,7 @@ describe('mindwallet binary config resolution', () => {
   });
 
   it('discovers SIWX payment requirements through the binary', async () => {
-    const result = await runMindwallet({
+    const result = await runMindpass({
       args: ['discover', `${siwxServer.url}/resource`],
     });
 
@@ -194,7 +210,7 @@ describe('mindwallet binary config resolution', () => {
   });
 
   it('prints discover results as JSON with --json', async () => {
-    const result = await runMindwallet({
+    const result = await runMindpass({
       args: ['discover', `${siwxServer.url}/resource`, '--json'],
     });
 
@@ -205,13 +221,13 @@ describe('mindwallet binary config resolution', () => {
   });
 
   it('discovers x402 payment requirements through the binary in private-key mode', async () => {
-    const result = await runMindwallet({
+    const result = await runMindpass({
       args: ['discover', `${server.url}/x402/data`],
       env: {
         ...process.env,
         HOME: makeTempConfigHome(),
-        MINDWALLET_PRIVATE_KEY: TEST_PRIVATE_KEY,
-        MINDWALLET_CHAIN_IDS: 'eip155:84532',
+        MINDPASS_PRIVATE_KEY: TEST_PRIVATE_KEY,
+        MINDPASS_CHAIN_IDS: 'eip155:84532',
       },
     });
 
@@ -220,13 +236,13 @@ describe('mindwallet binary config resolution', () => {
   });
 
   it('discovers tempo payment requirements through the binary in private-key mode', async () => {
-    const result = await runMindwallet({
+    const result = await runMindpass({
       args: ['discover', `${server.url}/mpp/data`],
       env: {
         ...process.env,
         HOME: makeTempConfigHome(),
-        MINDWALLET_PRIVATE_KEY: TEST_PRIVATE_KEY,
-        MINDWALLET_CHAIN_IDS: 'eip155:8453',
+        MINDPASS_PRIVATE_KEY: TEST_PRIVATE_KEY,
+        MINDPASS_CHAIN_IDS: 'eip155:8453',
       },
     });
 
@@ -257,11 +273,11 @@ describe('mindwallet binary config resolution', () => {
     const port = typeof address === 'object' && address ? address.port : 0;
 
     try {
-      const result = await runMindwallet({
+      const result = await runMindpass({
         args: ['search', 'registry', '--protocol', 'x402'],
         env: {
           ...process.env,
-          MINDWALLET_REGISTRY_URL: `http://127.0.0.1:${port}`,
+          MINDPASS_REGISTRY_URL: `http://127.0.0.1:${port}`,
         },
       });
 
@@ -269,11 +285,11 @@ describe('mindwallet binary config resolution', () => {
       expect(result.stdout).toContain('https://registry.example.test');
       expect(result.stdout).toContain('x402');
 
-      const jsonResult = await runMindwallet({
+      const jsonResult = await runMindpass({
         args: ['search', 'registry', '--protocol', 'x402', '--json'],
         env: {
           ...process.env,
-          MINDWALLET_REGISTRY_URL: `http://127.0.0.1:${port}`,
+          MINDPASS_REGISTRY_URL: `http://127.0.0.1:${port}`,
         },
       });
 
@@ -281,6 +297,40 @@ describe('mindwallet binary config resolution', () => {
       const parsed = JSON.parse(jsonResult.stdout);
       expect(parsed[0].origin).toBe('https://registry.example.test');
       expect(parsed[0].protocols).toContain('x402');
+    } finally {
+      await new Promise<void>((resolve, reject) =>
+        registry.close((error) => (error ? reject(error) : resolve())),
+      );
+    }
+  });
+
+  it('uses MINDPASS_REGISTRY_URL through the binary', async () => {
+    const registry = createServer((req, res) => {
+      if (req.url?.startsWith('/origins')) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify([{ origin: 'https://mindpass-registry.example.test', protocols: ['x402'] }]));
+        return;
+      }
+
+      res.writeHead(404);
+      res.end();
+    });
+
+    await new Promise<void>((resolve) => registry.listen(0, '127.0.0.1', () => resolve()));
+    const address = registry.address();
+    const port = typeof address === 'object' && address ? address.port : 0;
+
+    try {
+      const result = await runMindpass({
+        args: ['search', 'registry', '--protocol', 'x402'],
+        env: {
+          ...process.env,
+          MINDPASS_REGISTRY_URL: `http://127.0.0.1:${port}`,
+        },
+      });
+
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('https://mindpass-registry.example.test');
     } finally {
       await new Promise<void>((resolve, reject) =>
         registry.close((error) => (error ? reject(error) : resolve())),

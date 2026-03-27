@@ -1,4 +1,4 @@
-// ABOUTME: Builds a MindRouter from a MindwalletConfig, wiring protocols and policy rules
+// ABOUTME: Builds a MindRouter from a MindpassConfig, wiring protocols and policy rules
 // ABOUTME: Supports both OWS vault wallets (SIWX) and private key wallets (SIWX + x402 + Tempo)
 
 import { join } from 'node:path';
@@ -14,9 +14,9 @@ import {
   type RouterMethod,
   type RouterStateStore,
   type WalletAdapter,
-} from '@mindwallet/core';
-import { createSiwxMethod, createTempoMethod, createX402Method } from '@mindwallet/protocols';
-import type { MindwalletConfig, PolicyRuleConfig } from './config.js';
+} from '@mindpass/core';
+import { createSiwxMethod, createTempoMethod, createX402Method } from '@mindpass/protocols';
+import type { MindpassConfig, PolicyRuleConfig } from './config.js';
 
 export function convertPolicy(rules: PolicyRuleConfig[] | undefined): PolicyRule[] {
   return (rules ?? []).map((rule): PolicyRule => {
@@ -51,7 +51,7 @@ export interface RouterContext {
   methods: RouterMethod[];
 }
 
-export function routerFromConfig(config: MindwalletConfig): RouterContext {
+export function routerFromConfig(config: MindpassConfig): RouterContext {
   const state = createMemoryStore();
   const userPolicy = convertPolicy(config.policy);
 

@@ -7,8 +7,8 @@ import { wrapFetch } from './adapter.js';
 import { createRouter } from '../router.js';
 import { createMemoryStore } from '../state/memory.js';
 import { PrivateKeyWalletAdapter } from '../wallet/private-key.js';
-import { createX402Method } from '@mindwallet/protocols';
-import { startTestServer, type TestServerHandle } from '@mindwallet/test-server';
+import { createX402Method } from '@mindpass/protocols';
+import { startTestServer, type TestServerHandle } from '@mindpass/test-server';
 
 const RUN = process.env['RUN_INTEGRATION_TESTS'] === '1';
 const PRIVATE_KEY = process.env['TEST_PRIVATE_KEY'] as `0x${string}` | undefined;

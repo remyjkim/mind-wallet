@@ -3,12 +3,12 @@
 
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { createWallet } from '@open-wallet-standard/core';
-import { startTestServer, type TestServerHandle } from '@mindwallet/test-server';
+import { startTestServer, type TestServerHandle } from '@mindpass/test-server';
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { MindwalletConfig } from './config.js';
-import { makeTempConfigHome, writeMindwalletConfig } from './cli-binary-test-helpers.js';
+import type { MindpassConfig } from './config.js';
+import { makeTempConfigHome, writeMindpassConfig } from './cli-binary-test-helpers.js';
 
 export const TEST_PRIVATE_KEY =
   '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80' as const;
@@ -69,7 +69,7 @@ export function startSiwxTestServer(): Promise<SiwxTestServer> {
   });
 }
 
-export function makePrivateKeyConfig(overrides: Partial<MindwalletConfig> = {}): MindwalletConfig {
+export function makePrivateKeyConfig(overrides: Partial<MindpassConfig> = {}): MindpassConfig {
   return {
     privateKey: TEST_PRIVATE_KEY,
     chainIds: ['eip155:8453'],
@@ -92,13 +92,13 @@ export interface TempOwsFixture {
   configPath: string;
 }
 
-export function createTempOwsFixture(overrides: Partial<MindwalletConfig> = {}): TempOwsFixture {
+export function createTempOwsFixture(overrides: Partial<MindpassConfig> = {}): TempOwsFixture {
   const home = makeTempConfigHome();
   const walletId = overrides.walletId ?? 'default';
   const vaultPath = overrides.vaultPath ?? mkdtempSync(join(tmpdir(), 'mw-ows-vault-'));
 
   createWallet(walletId, undefined, 12, vaultPath);
-  const configPath = writeMindwalletConfig(home, {
+  const configPath = writeMindpassConfig(home, {
     walletId,
     vaultPath,
     ...overrides,

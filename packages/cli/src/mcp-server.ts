@@ -1,23 +1,23 @@
-// ABOUTME: MCP server that exposes mindwallet as a tool for AI agents
+// ABOUTME: MCP server that exposes mindpass as a tool for AI agents
 // ABOUTME: Provides fetch_with_payment and probe_origin tools over stdio transport
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
-import { wrapFetch } from '@mindwallet/core';
-import { probeOrigin } from '@mindwallet/discovery';
+import { wrapFetch } from '@mindpass/core';
+import { probeOrigin } from '@mindpass/discovery';
 import { routerFromConfig } from './router-from-config.js';
-import type { MindwalletConfig } from './config.js';
+import type { MindpassConfig } from './config.js';
 
 /**
- * Creates an MCP server with mindwallet tools registered but no transport connected.
+ * Creates an MCP server with mindpass tools registered but no transport connected.
  */
-export function createMcpServer(config: MindwalletConfig): McpServer {
+export function createMcpServer(config: MindpassConfig): McpServer {
   const { router, wallet, state, methods } = routerFromConfig(config);
   const fetch = wrapFetch({ fetch: globalThis.fetch, router, state, wallet });
 
   const server = new McpServer({
-    name: 'mindwallet',
+    name: 'mindpass',
     version: '0.1.0',
   });
 
@@ -98,9 +98,9 @@ export function createMcpServer(config: MindwalletConfig): McpServer {
 }
 
 /**
- * Creates and starts an MCP server that exposes mindwallet tools over stdio.
+ * Creates and starts an MCP server that exposes mindpass tools over stdio.
  */
-export async function startMcpServer(config: MindwalletConfig): Promise<void> {
+export async function startMcpServer(config: MindpassConfig): Promise<void> {
   const server = createMcpServer(config);
   const transport = new StdioServerTransport();
   await server.connect(transport);

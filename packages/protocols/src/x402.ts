@@ -3,7 +3,7 @@
 
 import { x402Client } from '@x402/core/client';
 import { encodePaymentSignatureHeader } from '@x402/core/http';
-import type { RouterMethod, PaymentCandidate, NormalizedPayment } from '@mindwallet/core';
+import type { RouterMethod, PaymentCandidate, NormalizedPayment } from '@mindpass/core';
 import type { Account as ViemAccount } from 'viem';
 
 export interface X402MethodConfig {

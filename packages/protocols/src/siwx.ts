@@ -1,7 +1,7 @@
 // ABOUTME: RouterMethod implementation for SIWX (Sign-In-With-X) authentication challenges
 // ABOUTME: Signs a wallet proof message and returns it as a Bearer token in Authorization header
 
-import type { RouterMethod, PaymentCandidate, NormalizedPayment } from '@mindwallet/core';
+import type { RouterMethod, PaymentCandidate, NormalizedPayment } from '@mindpass/core';
 
 /**
  * Creates a RouterMethod that handles SIWX authentication challenges.

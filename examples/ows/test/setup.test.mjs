@@ -8,7 +8,7 @@ import { setupExample } from '../scripts/setup.mjs';
 import { run } from '../src/index.mjs';
 
 test('setupExample creates a local OWS vault, env file, and config file', async () => {
-  const rootDir = mkdtempSync(join(tmpdir(), 'mindwallet-ows-example-'));
+  const rootDir = mkdtempSync(join(tmpdir(), 'mindpass-ows-example-'));
 
   try {
     const result = await setupExample({ rootDir });

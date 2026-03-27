@@ -1,16 +1,18 @@
 {
-  "name": "@mindwallet/core",
+  "name": "@mindpass/core",
   "version": "0.1.0",
   "license": "MIT",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/remyjkim/mind-wallet.git",
+    "url": "https://github.com/remyjkim/mindpass.git",
     "directory": "packages/core"
   },
-  "homepage": "https://github.com/remyjkim/mind-wallet#readme",
+  "homepage": "https://github.com/remyjkim/mindpass#readme",
   "bugs": {
-    "url": "https://github.com/remyjkim/mind-wallet/issues"
+    "url": "https://github.com/remyjkim/mindpass/issues"
   },
   "keywords": [
     "http-402",
@@ -41,8 +43,8 @@
     "check": "bun run typecheck && bun run build && bun run test"
   },
   "devDependencies": {
-    "@mindwallet/protocols": "workspace:*",
-    "@mindwallet/test-server": "workspace:*",
+    "@mindpass/protocols": "workspace:*",
+    "@mindpass/test-server": "workspace:*",
     "@types/node": "^25.5.0",
     "tsup": "^8.0.0",
     "typescript": "^5.4.0",

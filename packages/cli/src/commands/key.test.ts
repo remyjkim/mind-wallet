@@ -3,9 +3,9 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import { keyCreateCommand, keyRevokeCommand, keyListCommand } from './key.js';
-import type { MindwalletConfig } from '../config.js';
+import type { MindpassConfig } from '../config.js';
 
-const config: MindwalletConfig = {
+const config: MindpassConfig = {
   walletId: 'test-wallet',
   vaultPath: '/tmp/vault',
 };
@@ -30,7 +30,7 @@ describe('keyCreateCommand', () => {
 
   it('passes walletId, vaultPath, and passphrase to OWS', async () => {
     const mockCreate = vi.fn().mockReturnValue({ token: 't', id: 'k', name: 'n' });
-    const cfgWithPass: MindwalletConfig = { ...config, passphrase: 'secret' };
+    const cfgWithPass: MindpassConfig = { ...config, passphrase: 'secret' };
     await keyCreateCommand('agent-key', cfgWithPass, { owsCreate: mockCreate, output: () => {} });
     expect(mockCreate).toHaveBeenCalledWith(
       'agent-key',

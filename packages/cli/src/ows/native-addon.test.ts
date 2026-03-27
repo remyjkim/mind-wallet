@@ -6,16 +6,22 @@ import {
 } from './resolve-native-addon.js';
 
 describe('resolveOwsNativeAddonPath', () => {
-  it('prefers MINDWALLET_OWS_NATIVE_PATH when set', () => {
+  it('prefers MINDPASS_OWS_NATIVE_PATH when set', () => {
     expect(resolveOwsNativeAddonPath({
-      env: { MINDWALLET_OWS_NATIVE_PATH: '/tmp/custom-ows.node' } as NodeJS.ProcessEnv,
+      env: { MINDPASS_OWS_NATIVE_PATH: '/tmp/custom-ows.node' } as NodeJS.ProcessEnv,
+    })).toBe('/tmp/custom-ows.node');
+  });
+
+  it('falls back to MINDPASS_OWS_NATIVE_PATH when needed', () => {
+    expect(resolveOwsNativeAddonPath({
+      env: { MINDPASS_OWS_NATIVE_PATH: '/tmp/custom-ows.node' } as NodeJS.ProcessEnv,
     })).toBe('/tmp/custom-ows.node');
   });
 
   it('discovers a colocated addon next to the executable', () => {
     expect(resolveOwsNativeAddonPath({
       env: {} as NodeJS.ProcessEnv,
-      execPath: '/tmp/mindwallet',
+      execPath: '/tmp/mindpass',
       platform: 'darwin',
       arch: 'arm64',
       exists: (path) => path === '/tmp/ows/ows-node.darwin-arm64.node',

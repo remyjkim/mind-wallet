@@ -1,7 +1,7 @@
 // packages/discovery/src/prober.test.ts
 import { describe, it, expect, vi } from 'vitest';
 import { probeOrigin } from './prober.js';
-import type { RouterMethod } from '@mindwallet/core';
+import type { RouterMethod } from '@mindpass/core';
 
 function makeTempoMethod(): RouterMethod {
   return {

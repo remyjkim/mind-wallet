@@ -1,8 +1,8 @@
 // ABOUTME: Probes an HTTP origin to discover its payment protocol requirements
 // ABOUTME: Makes a GET request and parses the 402 response headers and body
 
-import { parseHttpChallenges } from '@mindwallet/core';
-import type { RouterMethod, PaymentCandidate } from '@mindwallet/core';
+import { parseHttpChallenges } from '@mindpass/core';
+import type { RouterMethod, PaymentCandidate } from '@mindpass/core';
 
 export interface ProbeResult {
   url: string;

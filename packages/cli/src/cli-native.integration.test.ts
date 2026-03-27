@@ -18,15 +18,15 @@ const target =
   process.platform === 'darwin' || process.platform === 'linux'
     ? `${process.platform}-${process.arch}`
     : undefined;
-const nativeBinaryPath = target ? join(repoRoot, 'dist', 'native', target, 'mindwallet') : undefined;
+const nativeBinaryPath = target ? join(repoRoot, 'dist', 'native', target, 'mindpass') : undefined;
 
-describe.skipIf(!nativeBinaryPath)('mindwallet native binary', () => {
+describe.skipIf(!nativeBinaryPath)('mindpass native binary', () => {
   beforeAll(() => {
     execFileOrThrow('node', ['scripts/build-native-cli.mjs', '--target', target!], repoRoot);
   }, 30_000);
 
   it('prints the package version with --version', async () => {
-    const result = await runNativeMindwallet(['--version']);
+    const result = await runNativeMindpass(['--version']);
 
     expect(result.code).toBe(0);
     expect(result.stdout.trim()).toBe('0.2.0');
@@ -34,7 +34,7 @@ describe.skipIf(!nativeBinaryPath)('mindwallet native binary', () => {
   });
 
   it('prints help without requiring an OWS native path env var', async () => {
-    const result = await runNativeMindwallet(['help']);
+    const result = await runNativeMindpass(['help']);
 
     expect(result.code).toBe(0);
     expect(result.stdout).toContain('Usage:');
@@ -42,12 +42,12 @@ describe.skipIf(!nativeBinaryPath)('mindwallet native binary', () => {
   });
 
   it('loads the colocated OWS addon for wallet commands', async () => {
-    const tempHome = mkdtempSync(join(tmpdir(), 'mindwallet-native-home-'));
-    const result = await runNativeMindwallet(['wallet'], {
+    const tempHome = mkdtempSync(join(tmpdir(), 'mindpass-native-home-'));
+    const result = await runNativeMindpass(['wallet'], {
       env: {
         ...process.env,
         HOME: tempHome,
-        MINDWALLET_VAULT_PATH: join(tempHome, 'vault'),
+        MINDPASS_VAULT_PATH: join(tempHome, 'vault'),
       },
     });
 
@@ -65,7 +65,7 @@ function execFileOrThrow(command: string, args: string[], cwd: string): void {
   });
 }
 
-function runNativeMindwallet(args: string[], options: { env?: NodeJS.ProcessEnv } = {}): Promise<RunResult> {
+function runNativeMindpass(args: string[], options: { env?: NodeJS.ProcessEnv } = {}): Promise<RunResult> {
   return new Promise((resolveResult, reject) => {
     execFile(
       nativeBinaryPath!,

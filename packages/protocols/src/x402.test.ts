@@ -1,7 +1,7 @@
 // packages/protocols/src/x402.test.ts
 import { describe, it, expect } from 'vitest';
 import { createX402Method } from './x402.js';
-import type { PaymentCandidate } from '@mindwallet/core';
+import type { PaymentCandidate } from '@mindpass/core';
 
 function makeAccount() {
   return {

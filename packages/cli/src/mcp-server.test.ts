@@ -9,15 +9,22 @@ import { join } from 'node:path';
 import { createWallet } from '@open-wallet-standard/core';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
-import type { TestServerHandle } from '@mindwallet/test-server';
+import type { TestServerHandle } from '@mindpass/test-server';
 import { createMcpServer } from './mcp-server.js';
-import type { MindwalletConfig } from './config.js';
+import type { MindpassConfig } from './config.js';
 import {
   makePrivateKeyConfig,
   startLocalPaymentTestServer,
   startSiwxTestServer,
   type SiwxTestServer,
 } from './test-helpers.js';
+
+describe('createMcpServer metadata', () => {
+  it('registers the server as mindpass', () => {
+    const server = createMcpServer(makePrivateKeyConfig());
+    expect(((server.server as unknown) as { _serverInfo?: { name?: string } })._serverInfo?.name).toBe('mindpass');
+  });
+});
 
 const skip = !process.env['RUN_INTEGRATION_TESTS'] || !process.env['OWS_PASSPHRASE'];
 const pkSkip = !process.env['RUN_INTEGRATION_TESTS'];
@@ -69,7 +76,7 @@ describe.skipIf(skip)('MCP server tools: SIWX 402 integration (local server)', (
     vaultPath = mkdtempSync(join(tmpdir(), 'mw-mcp-test-'));
     createWallet('test-wallet', undefined, 12, vaultPath);
 
-    const config: MindwalletConfig = {
+    const config: MindpassConfig = {
       walletId: 'test-wallet',
       vaultPath,
     };

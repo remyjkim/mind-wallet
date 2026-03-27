@@ -4,7 +4,7 @@ import path from 'path';
 export default defineConfig({
   resolve: {
     alias: {
-      '@mindwallet/core': path.resolve(__dirname, '../core/src/index.ts'),
+      '@mindpass/core': path.resolve(__dirname, '../core/src/index.ts'),
     },
   },
   test: {

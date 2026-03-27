@@ -6,7 +6,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createWallet } from '@open-wallet-standard/core';
-import { OwsWalletAdapter } from '@mindwallet/core';
+import { OwsWalletAdapter } from '@mindpass/core';
 import { createSiwxMethod } from './siwx.js';
 
 const skip = !process.env['RUN_INTEGRATION_TESTS'] || !process.env['OWS_PASSPHRASE'];

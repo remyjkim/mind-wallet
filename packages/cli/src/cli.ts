@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// ABOUTME: CLI entry point for the mindwallet command
+// ABOUTME: CLI entry point for the mindpass command
 // ABOUTME: Parses subcommands and dispatches to wallet, fetch, pay, discover, search, key, or mcp
 
 import { resolveConfig, configPath } from './config.js';
@@ -35,7 +35,7 @@ async function main() {
   if (command === 'fetch') {
     const url = args[0];
     if (!url) {
-      console.error('Usage: mindwallet fetch <url> [--verbose] [--method GET]');
+      console.error('Usage: mindpass fetch <url> [--verbose] [--method GET]');
       process.exitCode = 1;
       return;
     }
@@ -50,7 +50,7 @@ async function main() {
   if (command === 'pay') {
     const url = args[0];
     if (!url) {
-      console.error('Usage: mindwallet pay <url> [--verbose]');
+      console.error('Usage: mindpass pay <url> [--verbose]');
       process.exitCode = 1;
       return;
     }
@@ -63,7 +63,7 @@ async function main() {
   if (command === 'discover') {
     const origin = args[0];
     if (!origin) {
-      console.error('Usage: mindwallet discover <origin>');
+      console.error('Usage: mindpass discover <origin>');
       process.exitCode = 1;
       return;
     }
@@ -76,7 +76,7 @@ async function main() {
   if (command === 'search') {
     const query = args[0];
     if (!query) {
-      console.error('Usage: mindwallet search <query> [--protocol <proto>]');
+      console.error('Usage: mindpass search <query> [--protocol <proto>]');
       process.exitCode = 1;
       return;
     }
@@ -94,7 +94,7 @@ async function main() {
     if (sub === 'create') {
       const name = args[1];
       if (!name) {
-        console.error('Usage: mindwallet key create <name> [--expires <iso-date>]');
+        console.error('Usage: mindpass key create <name> [--expires <iso-date>]');
         process.exitCode = 1;
         return;
       }
@@ -107,7 +107,7 @@ async function main() {
     if (sub === 'revoke') {
       const id = args[1];
       if (!id) {
-        console.error('Usage: mindwallet key revoke <key-id>');
+        console.error('Usage: mindpass key revoke <key-id>');
         process.exitCode = 1;
         return;
       }
@@ -137,18 +137,18 @@ async function main() {
 }
 
 function printHelp() {
-  console.log(`mindwallet — HTTP 402 payment wallet CLI
+  console.log(`mindpass — HTTP 402 payment wallet CLI
 
 Usage:
-  mindwallet wallet                Show wallet accounts from configured vault
-  mindwallet fetch <url>           Fetch a URL with automatic payment handling
-  mindwallet pay <url>             Pay and fetch a URL, showing payment details
-  mindwallet discover <origin>     Probe an origin for payment requirements
-  mindwallet search <query>        Search registry for payment-gated origins
-  mindwallet key list              List API keys in the vault
-  mindwallet key create <name>     Create a new API key (token shown once)
-  mindwallet key revoke <id>       Revoke an API key by ID
-  mindwallet mcp                   Start the MCP server over stdio
+  mindpass wallet                Show wallet accounts from configured vault
+  mindpass fetch <url>           Fetch a URL with automatic payment handling
+  mindpass pay <url>             Pay and fetch a URL, showing payment details
+  mindpass discover <origin>     Probe an origin for payment requirements
+  mindpass search <query>        Search registry for payment-gated origins
+  mindpass key list              List API keys in the vault
+  mindpass key create <name>     Create a new API key (token shown once)
+  mindpass key revoke <id>       Revoke an API key by ID
+  mindpass mcp                   Start the MCP server over stdio
 
 Options:
   --verbose, -v                    Show payment and response details (fetch/pay)

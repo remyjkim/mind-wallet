@@ -1,9 +1,9 @@
-// ABOUTME: Live-gated black-box integration tests for the compiled mindwallet binary
+// ABOUTME: Live-gated black-box integration tests for the compiled mindpass binary
 // ABOUTME: Verifies private-key x402 and Tempo flows through the real executable
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type { TestServerHandle } from '@mindwallet/test-server';
-import { makeTempConfigHome, runMindwallet } from './cli-binary-test-helpers.js';
+import type { TestServerHandle } from '@mindpass/test-server';
+import { makeTempConfigHome, runMindpass } from './cli-binary-test-helpers.js';
 import { startLocalPaymentTestServer } from './test-helpers.js';
 
 const skip =
@@ -11,7 +11,7 @@ const skip =
   !process.env['TEST_PRIVATE_KEY'] ||
   !process.env['TEMPO_RPC_URL'];
 
-describe.skipIf(skip)('mindwallet binary live integrations', () => {
+describe.skipIf(skip)('mindpass binary live integrations', () => {
   let server: TestServerHandle;
 
   beforeAll(async () => {
@@ -23,13 +23,13 @@ describe.skipIf(skip)('mindwallet binary live integrations', () => {
   });
 
   it('fetches a local x402 endpoint through the real binary with a live private key', async () => {
-    const result = await runMindwallet({
+    const result = await runMindpass({
       args: ['fetch', `${server.url}/x402/data`],
       env: {
         ...process.env,
         HOME: makeTempConfigHome(),
-        MINDWALLET_PRIVATE_KEY: process.env['TEST_PRIVATE_KEY']!,
-        MINDWALLET_CHAIN_IDS: 'eip155:84532',
+        MINDPASS_PRIVATE_KEY: process.env['TEST_PRIVATE_KEY']!,
+        MINDPASS_CHAIN_IDS: 'eip155:84532',
       },
     });
 
@@ -38,15 +38,15 @@ describe.skipIf(skip)('mindwallet binary live integrations', () => {
   });
 
   it('pays a local Tempo challenge through the real binary', async () => {
-    const result = await runMindwallet({
+    const result = await runMindpass({
       args: ['pay', `${server.url}/mpp/data`],
       env: {
         ...process.env,
         HOME: makeTempConfigHome(),
-        MINDWALLET_PRIVATE_KEY: process.env['TEST_PRIVATE_KEY']!,
-        MINDWALLET_CHAIN_IDS: 'eip155:42431',
-        MINDWALLET_RPC_TEMPO: process.env['TEMPO_RPC_URL']!,
-        MINDWALLET_TEMPO_GAS: '200000',
+        MINDPASS_PRIVATE_KEY: process.env['TEST_PRIVATE_KEY']!,
+        MINDPASS_CHAIN_IDS: 'eip155:42431',
+        MINDPASS_RPC_TEMPO: process.env['TEMPO_RPC_URL']!,
+        MINDPASS_TEMPO_GAS: '200000',
       },
       timeoutMs: 20_000,
     });

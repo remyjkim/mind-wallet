@@ -13,7 +13,7 @@ function examplePaths(rootDir) {
     demoDir: join(baseDir, '.demo'),
     vaultPath: join(baseDir, '.demo', 'vault'),
     envPath: join(baseDir, '.env'),
-    configPath: join(baseDir, 'mindwallet.config.json'),
+    configPath: join(baseDir, 'mindpass.config.json'),
   };
 }
 

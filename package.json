@@ -1,5 +1,5 @@
 {
-  "name": "mindwallet-monorepo",
+  "name": "mindpass-monorepo",
   "private": true,
   "packageManager": "bun@1.2.15",
   "workspaces": [
@@ -8,10 +8,10 @@
     "docs"
   ],
   "scripts": {
-    "build": "bun run --filter @mindwallet/test-server build && bun run --filter @mindwallet/core build && bun run --filter @mindwallet/protocols build && bun run --filter @mindwallet/discovery build && bun run --filter mindwallet build && bun run --filter mindwallet-docs build",
-    "test": "bun run --filter @mindwallet/core test && bun run --filter @mindwallet/protocols test && bun run --filter @mindwallet/discovery test && bun run --filter mindwallet test",
-    "typecheck": "bun run --filter @mindwallet/test-server typecheck && bun run --filter @mindwallet/core typecheck && bun run --filter @mindwallet/protocols typecheck && bun run --filter @mindwallet/discovery typecheck && bun run --filter mindwallet typecheck && bun run --filter mindwallet-docs typecheck",
-    "check": "bun run --filter @mindwallet/test-server check && bun run --filter @mindwallet/core check && bun run --filter @mindwallet/protocols check && bun run --filter @mindwallet/discovery check && bun run --filter mindwallet check && bun run --filter mindwallet-docs check && bun run --filter @examples/ows check",
+    "build": "bun run --filter @mindpass/test-server build && bun run --filter @mindpass/core build && bun run --filter @mindpass/protocols build && bun run --filter @mindpass/discovery build && bun run --filter mindpass-cli build && bun run --filter mindpass-docs build",
+    "test": "bun run --filter @mindpass/core test && bun run --filter @mindpass/protocols test && bun run --filter @mindpass/discovery test && bun run --filter mindpass-cli test",
+    "typecheck": "bun x tsc --noEmit -p packages/test-server/tsconfig.json && bun x tsc --noEmit -p packages/core/tsconfig.json && bun x tsc --noEmit -p packages/protocols/tsconfig.json && bun x tsc --noEmit -p packages/discovery/tsconfig.json && bun x tsc --noEmit -p packages/cli/tsconfig.json && bun x tsc --noEmit -p docs/tsconfig.json",
+    "check": "bun run --filter @mindpass/test-server check && bun run --filter @mindpass/core check && bun run --filter @mindpass/protocols check && bun run --filter @mindpass/discovery check && bun run --filter mindpass-cli check && bun run --filter mindpass-docs check && bun run --filter @examples/ows check",
     "native:build": "node scripts/build-native-cli.mjs",
     "native:build:darwin-arm64": "node scripts/build-native-cli.mjs --target darwin-arm64",
     "native:build:darwin-x64": "node scripts/build-native-cli.mjs --target darwin-x64",

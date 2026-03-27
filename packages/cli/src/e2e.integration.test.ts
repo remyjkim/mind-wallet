@@ -12,8 +12,8 @@ import {
   createMemoryStore,
   createRouter,
   wrapFetch,
-} from '@mindwallet/core';
-import { createSiwxMethod } from '@mindwallet/protocols';
+} from '@mindpass/core';
+import { createSiwxMethod } from '@mindpass/protocols';
 
 const skip = !process.env['RUN_INTEGRATION_TESTS'] || !process.env['OWS_PASSPHRASE'];
 

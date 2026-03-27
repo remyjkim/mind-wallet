@@ -6,9 +6,9 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createWallet } from '@open-wallet-standard/core';
-import type { TestServerHandle } from '@mindwallet/test-server';
+import type { TestServerHandle } from '@mindpass/test-server';
 import { payCommand } from './pay.js';
-import type { MindwalletConfig } from '../config.js';
+import type { MindpassConfig } from '../config.js';
 import {
   makePrivateKeyConfig,
   startLocalPaymentTestServer,
@@ -30,7 +30,7 @@ const tempoSkip =
 describe.skipIf(skip)('payCommand: SIWX 402 integration (local server)', () => {
   let srv: SiwxTestServer;
   let vaultPath: string;
-  let config: MindwalletConfig;
+  let config: MindpassConfig;
 
   beforeAll(async () => {
     srv = await startSiwxTestServer();
@@ -93,7 +93,7 @@ describe.skipIf(skip)('payCommand: SIWX 402 integration (local server)', () => {
 
 describe.skipIf(pkSkip)('payCommand: private key x402 integration', () => {
   let server: TestServerHandle;
-  let config: MindwalletConfig;
+  let config: MindpassConfig;
 
   beforeAll(async () => {
     server = await startLocalPaymentTestServer();
@@ -157,7 +157,7 @@ describe.skipIf(pkSkip)('payCommand: local Tempo challenge discovery', () => {
 
 describe.skipIf(tempoSkip)('payCommand: live Tempo integration', () => {
   let server: TestServerHandle;
-  let config: MindwalletConfig;
+  let config: MindpassConfig;
 
   beforeAll(async () => {
     server = await startLocalPaymentTestServer();

@@ -2,6 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@mindpass/core": ["../core/dist/index.d.ts"]
+    },
     "types": ["node"]
   },
   "include": ["src"]

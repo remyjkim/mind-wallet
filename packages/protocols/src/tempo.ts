@@ -3,7 +3,7 @@
 
 import { Challenge, Credential, Method as MppxMethod } from 'mppx';
 import { Methods as TempoMethods } from 'mppx/tempo';
-import type { RouterMethod, PaymentCandidate, NormalizedPayment, RouterStateStore } from '@mindwallet/core';
+import type { RouterMethod, PaymentCandidate, NormalizedPayment, RouterStateStore } from '@mindpass/core';
 import type { Account as ViemAccount } from 'viem';
 import { createPublicClient, http } from 'viem';
 

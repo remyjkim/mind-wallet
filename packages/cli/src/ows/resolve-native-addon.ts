@@ -36,7 +36,7 @@ export function getNativeTargetId(
 
 export function resolveOwsNativeAddonPath(options: ResolveNativeAddonOptions = {}): string | undefined {
   const env = options.env ?? process.env;
-  const explicitPath = env['MINDWALLET_OWS_NATIVE_PATH'];
+  const explicitPath = env['MINDPASS_OWS_NATIVE_PATH'];
   if (explicitPath) return explicitPath;
 
   const filename = getOwsNativeAddonFilename(options.platform ?? process.platform, options.arch ?? process.arch);

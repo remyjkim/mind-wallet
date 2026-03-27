@@ -1,32 +1,32 @@
-// ABOUTME: Black-box tests for the compiled mindwallet binary help and usage UX
+// ABOUTME: Black-box tests for the compiled mindpass binary help and usage UX
 // ABOUTME: Verifies process-level exit codes and stdio output for the real CLI entrypoint
 
 import { beforeAll, describe, expect, it } from 'vitest';
-import { buildCliOnce, runMindwallet } from './cli-binary-test-helpers.js';
+import { buildCliOnce, runMindpass } from './cli-binary-test-helpers.js';
 
-describe('mindwallet binary help UX', () => {
+describe('mindpass binary help UX', () => {
   beforeAll(async () => {
     await buildCliOnce();
   }, 60_000);
 
   it('prints help with no arguments', async () => {
-    const result = await runMindwallet({ args: [] });
+    const result = await runMindpass({ args: [] });
 
     expect(result.code).toBe(0);
     expect(result.stdout).toContain('Usage:');
-    expect(result.stdout).toContain('mindwallet wallet');
+    expect(result.stdout).toContain('mindpass wallet');
     expect(result.stderr).toBe('');
   });
 
   it('runs the built CLI and prints help', async () => {
-    const result = await runMindwallet({ args: ['--help'] });
+    const result = await runMindpass({ args: ['--help'] });
 
     expect(result.code).toBe(0);
-    expect(result.stdout).toContain('mindwallet');
+    expect(result.stdout).toContain('mindpass');
   });
 
   it('prints help with help command', async () => {
-    const result = await runMindwallet({ args: ['help'] });
+    const result = await runMindpass({ args: ['help'] });
 
     expect(result.code).toBe(0);
     expect(result.stdout).toContain('Usage:');
@@ -34,7 +34,7 @@ describe('mindwallet binary help UX', () => {
   });
 
   it('prints the package version with --version', async () => {
-    const result = await runMindwallet({ args: ['--version'] });
+    const result = await runMindpass({ args: ['--version'] });
 
     expect(result.code).toBe(0);
     expect(result.stdout.trim()).toBe('0.2.0');
@@ -42,7 +42,7 @@ describe('mindwallet binary help UX', () => {
   });
 
   it('prints help with -h', async () => {
-    const result = await runMindwallet({ args: ['-h'] });
+    const result = await runMindpass({ args: ['-h'] });
 
     expect(result.code).toBe(0);
     expect(result.stdout).toContain('Usage:');
@@ -50,7 +50,7 @@ describe('mindwallet binary help UX', () => {
   });
 
   it('returns an error for an unknown command', async () => {
-    const result = await runMindwallet({ args: ['nope'] });
+    const result = await runMindpass({ args: ['nope'] });
 
     expect(result.code).toBe(1);
     expect(result.stderr).toContain('Unknown command: nope');
@@ -58,49 +58,49 @@ describe('mindwallet binary help UX', () => {
   });
 
   it('returns usage error for fetch without a URL', async () => {
-    const result = await runMindwallet({ args: ['fetch'] });
+    const result = await runMindpass({ args: ['fetch'] });
 
     expect(result.code).toBe(1);
-    expect(result.stderr).toContain('Usage: mindwallet fetch <url>');
+    expect(result.stderr).toContain('Usage: mindpass fetch <url>');
   });
 
   it('returns usage error for pay without a URL', async () => {
-    const result = await runMindwallet({ args: ['pay'] });
+    const result = await runMindpass({ args: ['pay'] });
 
     expect(result.code).toBe(1);
-    expect(result.stderr).toContain('Usage: mindwallet pay <url>');
+    expect(result.stderr).toContain('Usage: mindpass pay <url>');
   });
 
   it('returns usage error for discover without an origin', async () => {
-    const result = await runMindwallet({ args: ['discover'] });
+    const result = await runMindpass({ args: ['discover'] });
 
     expect(result.code).toBe(1);
-    expect(result.stderr).toContain('Usage: mindwallet discover <origin>');
+    expect(result.stderr).toContain('Usage: mindpass discover <origin>');
   });
 
   it('returns usage error for search without a query', async () => {
-    const result = await runMindwallet({ args: ['search'] });
+    const result = await runMindpass({ args: ['search'] });
 
     expect(result.code).toBe(1);
-    expect(result.stderr).toContain('Usage: mindwallet search <query>');
+    expect(result.stderr).toContain('Usage: mindpass search <query>');
   });
 
   it('returns usage error for key create without a name', async () => {
-    const result = await runMindwallet({ args: ['key', 'create'] });
+    const result = await runMindpass({ args: ['key', 'create'] });
 
     expect(result.code).toBe(1);
-    expect(result.stderr).toContain('Usage: mindwallet key create <name>');
+    expect(result.stderr).toContain('Usage: mindpass key create <name>');
   });
 
   it('returns usage error for key revoke without an id', async () => {
-    const result = await runMindwallet({ args: ['key', 'revoke'] });
+    const result = await runMindpass({ args: ['key', 'revoke'] });
 
     expect(result.code).toBe(1);
-    expect(result.stderr).toContain('Usage: mindwallet key revoke <key-id>');
+    expect(result.stderr).toContain('Usage: mindpass key revoke <key-id>');
   });
 
   it('returns an error for an unknown key subcommand', async () => {
-    const result = await runMindwallet({ args: ['key', 'bogus'] });
+    const result = await runMindpass({ args: ['key', 'bogus'] });
 
     expect(result.code).toBe(1);
     expect(result.stderr).toContain('Unknown key subcommand: bogus');

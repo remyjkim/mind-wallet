@@ -3,7 +3,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import { discoverCommand } from './discover.js';
-import { createSiwxMethod } from '@mindwallet/protocols';
+import { createSiwxMethod } from '@mindpass/protocols';
 
 function makeFetch(status: number, body = '', headers: Record<string, string> = {}) {
   return vi.fn().mockResolvedValue(

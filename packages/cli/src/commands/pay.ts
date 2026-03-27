@@ -1,10 +1,10 @@
 // ABOUTME: CLI command that pays a specific endpoint and prints the response
 // ABOUTME: Probes the URL first, then selects and executes the best payment method
 
-import { probeOrigin } from '@mindwallet/discovery';
-import { wrapFetch } from '@mindwallet/core';
+import { probeOrigin } from '@mindpass/discovery';
+import { wrapFetch } from '@mindpass/core';
 import { routerFromConfig } from '../router-from-config.js';
-import type { MindwalletConfig } from '../config.js';
+import type { MindpassConfig } from '../config.js';
 
 export interface PayCommandOptions {
   method?: string;
@@ -16,7 +16,7 @@ export interface PayCommandOptions {
  */
 export async function payCommand(
   url: string,
-  config: MindwalletConfig,
+  config: MindpassConfig,
   options: PayCommandOptions = {},
 ): Promise<void> {
   const { router, wallet, state, methods } = routerFromConfig(config);

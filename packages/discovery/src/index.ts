@@ -1,4 +1,4 @@
-// ABOUTME: Public API surface for @mindwallet/discovery
+// ABOUTME: Public API surface for @mindpass/discovery
 // ABOUTME: Re-exports origin probing and registry search utilities
 
 export { probeOrigin } from './prober.js';

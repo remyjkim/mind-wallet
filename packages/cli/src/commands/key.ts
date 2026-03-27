@@ -3,7 +3,7 @@
 
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import type { MindwalletConfig } from '../config.js';
+import type { MindpassConfig } from '../config.js';
 import { loadOws, type OwsBindings } from '../ows/load-ows.js';
 
 const DEFAULT_WALLET_ID = 'default';
@@ -30,7 +30,7 @@ export interface KeyListOptions {
  */
 export async function keyCreateCommand(
   name: string,
-  config: MindwalletConfig,
+  config: MindpassConfig,
   options: KeyCreateOptions = {},
 ): Promise<void> {
   const out = options.output ?? console.log;
@@ -60,7 +60,7 @@ export async function keyCreateCommand(
  */
 export async function keyRevokeCommand(
   id: string,
-  config: MindwalletConfig,
+  config: MindpassConfig,
   options: KeyRevokeOptions = {},
 ): Promise<void> {
   const out = options.output ?? console.log;
@@ -75,7 +75,7 @@ export async function keyRevokeCommand(
  * Lists all API key IDs and names. Tokens are never returned by OWS.
  */
 export async function keyListCommand(
-  config: MindwalletConfig,
+  config: MindpassConfig,
   options: KeyListOptions = {},
 ): Promise<void> {
   const out = options.output ?? console.log;

@@ -1,4 +1,4 @@
-// ABOUTME: Public entry point for @mindwallet/test-server
+// ABOUTME: Public entry point for @mindpass/test-server
 // ABOUTME: Exports startTestServer factory that spins up a local payment-gated Hono server
 
 import { serve } from '@hono/node-server';

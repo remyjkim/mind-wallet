@@ -8,13 +8,13 @@ const packageVersion = JSON.parse(
 
 export default defineConfig({
   define: {
-    __MINDWALLET_VERSION__: JSON.stringify(packageVersion),
+    __MINDPASS_VERSION__: JSON.stringify(packageVersion),
   },
   resolve: {
     alias: {
-      '@mindwallet/core': path.resolve(__dirname, '../core/src/index.ts'),
-      '@mindwallet/protocols': path.resolve(__dirname, '../protocols/src/index.ts'),
-      '@mindwallet/discovery': path.resolve(__dirname, '../discovery/src/index.ts'),
+      '@mindpass/core': path.resolve(__dirname, '../core/src/index.ts'),
+      '@mindpass/protocols': path.resolve(__dirname, '../protocols/src/index.ts'),
+      '@mindpass/discovery': path.resolve(__dirname, '../discovery/src/index.ts'),
     },
   },
   test: {

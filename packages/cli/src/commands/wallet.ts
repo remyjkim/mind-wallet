@@ -3,7 +3,7 @@
 
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import type { MindwalletConfig } from '../config.js';
+import type { MindpassConfig } from '../config.js';
 import { loadOws } from '../ows/load-ows.js';
 
 const DEFAULT_WALLET_ID = 'default';
@@ -12,7 +12,7 @@ const DEFAULT_VAULT_PATH = join(homedir(), '.minds', 'wallet', 'vault');
 /**
  * Prints wallet account information to stdout.
  */
-export async function walletCommand(config: MindwalletConfig): Promise<void> {
+export async function walletCommand(config: MindpassConfig): Promise<void> {
   const walletId = config.walletId ?? DEFAULT_WALLET_ID;
   const vaultPath = config.vaultPath ?? DEFAULT_VAULT_PATH;
   const { getWallet } = await loadOws();

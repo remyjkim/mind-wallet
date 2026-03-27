@@ -1,9 +1,9 @@
 // ABOUTME: CLI command that fetches a URL with automatic 402 payment handling
 // ABOUTME: Outputs the response body to stdout and payment details to stderr
 
-import { wrapFetch } from '@mindwallet/core';
+import { wrapFetch } from '@mindpass/core';
 import { routerFromConfig } from '../router-from-config.js';
-import type { MindwalletConfig } from '../config.js';
+import type { MindpassConfig } from '../config.js';
 
 export interface FetchCommandOptions {
   method?: string;
@@ -17,7 +17,7 @@ export interface FetchCommandOptions {
  */
 export async function fetchCommand(
   url: string,
-  config: MindwalletConfig,
+  config: MindpassConfig,
   options: FetchCommandOptions = {},
 ): Promise<void> {
   const { router, wallet, state } = routerFromConfig(config);

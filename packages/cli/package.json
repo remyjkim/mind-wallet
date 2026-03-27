@@ -1,16 +1,18 @@
 {
-  "name": "mindwallet",
+  "name": "mindpass-cli",
   "version": "0.2.0",
   "license": "MIT",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/remyjkim/mind-wallet.git",
+    "url": "https://github.com/remyjkim/mindpass.git",
     "directory": "packages/cli"
   },
-  "homepage": "https://github.com/remyjkim/mind-wallet#readme",
+  "homepage": "https://github.com/remyjkim/mindpass#readme",
   "bugs": {
-    "url": "https://github.com/remyjkim/mind-wallet/issues"
+    "url": "https://github.com/remyjkim/mindpass/issues"
   },
   "keywords": [
     "http-402",
@@ -31,7 +33,7 @@
     "README.md"
   ],
   "bin": {
-    "mindwallet": "dist/cli.js"
+    "mindpass": "dist/cli.js"
   },
   "exports": {
     ".": {
@@ -49,15 +51,15 @@
     "access": "public"
   },
   "dependencies": {
-    "@mindwallet/core": "workspace:*",
-    "@mindwallet/discovery": "workspace:*",
-    "@mindwallet/protocols": "workspace:*",
+    "@mindpass/core": "0.1.0",
+    "@mindpass/discovery": "0.1.0",
+    "@mindpass/protocols": "0.1.0",
     "@modelcontextprotocol/sdk": "^1.27.1",
     "viem": "^2.47.6",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@mindwallet/test-server": "workspace:*",
+    "@mindpass/test-server": "workspace:*",
     "@open-wallet-standard/core": "^1.0.0",
     "@types/node": "^25.5.0",
     "tsup": "^8.0.0",

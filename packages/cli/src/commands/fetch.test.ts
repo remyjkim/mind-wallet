@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createWallet } from '@open-wallet-standard/core';
 import { fetchCommand } from './fetch.js';
-import type { MindwalletConfig } from '../config.js';
+import type { MindpassConfig } from '../config.js';
 import { startSiwxTestServer, type SiwxTestServer } from '../test-helpers.js';
 
 const skip = !process.env['RUN_INTEGRATION_TESTS'] || !process.env['OWS_PASSPHRASE'];
@@ -20,7 +20,7 @@ const pkSkip = !process.env['RUN_INTEGRATION_TESTS'];
 describe.skipIf(skip)('fetchCommand: SIWX 402 integration (local server)', () => {
   let srv: SiwxTestServer;
   let vaultPath: string;
-  let config: MindwalletConfig;
+  let config: MindpassConfig;
 
   beforeAll(async () => {
     srv = await startSiwxTestServer();
@@ -71,7 +71,7 @@ describe.skipIf(skip)('fetchCommand: SIWX 402 integration (local server)', () =>
 
 describe.skipIf(pkSkip)('fetchCommand: private key wallet + SIWX 402 integration', () => {
   let srv: SiwxTestServer;
-  let config: MindwalletConfig;
+  let config: MindpassConfig;
 
   const TEST_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80' as const;
 

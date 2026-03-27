@@ -15,7 +15,7 @@ describe.skipIf(skip)('OwsWalletAdapter — local vault integration', () => {
 
   beforeAll(() => {
     // Create an isolated temp vault for this test run
-    vaultPath = mkdtempSync(join(tmpdir(), 'mindwallet-ows-test-'));
+    vaultPath = mkdtempSync(join(tmpdir(), 'mindpass-ows-test-'));
     // Create a test wallet using the real OWS Node SDK
     createWallet('test-wallet', undefined, 12, vaultPath);
   });
@@ -27,7 +27,7 @@ describe.skipIf(skip)('OwsWalletAdapter — local vault integration', () => {
 
   it('wallet is visible in listWallets after creation', () => {
     const wallets = listWallets(vaultPath);
-    const found = (wallets as Array<{ name: string }>).find(w => w.name === 'test-wallet');
+    const found = (wallets as Array<{ name: string }>).find((w) => w.name === 'test-wallet');
     expect(found).toBeDefined();
   });
 
@@ -41,7 +41,7 @@ describe.skipIf(skip)('OwsWalletAdapter — local vault integration', () => {
     const sig = await adapter.signMessage({
       walletId: 'test-wallet',
       chainId: 'eip155:8453',
-      message: 'hello from mindwallet integration test',
+      message: 'hello from mindpass integration test',
     });
 
     // EVM personal_sign produces a 65-byte signature: 0x + 130 hex chars
