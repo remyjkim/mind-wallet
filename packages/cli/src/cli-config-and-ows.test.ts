@@ -192,6 +192,17 @@ describe('mindwallet binary config resolution', () => {
     expect(result.stdout).toContain('protocol=siwx');
   });
 
+  it('prints discover results as JSON with --json', async () => {
+    const result = await runMindwallet({
+      args: ['discover', `${siwxServer.url}/resource`, '--json'],
+    });
+
+    expect(result.code).toBe(0);
+    const parsed = JSON.parse(result.stdout);
+    expect(parsed.requires402).toBe(true);
+    expect(parsed.candidates[0].protocol).toBe('siwx');
+  });
+
   it('discovers x402 payment requirements through the binary in private-key mode', async () => {
     const result = await runMindwallet({
       args: ['discover', `${server.url}/x402/data`],
@@ -256,6 +267,19 @@ describe('mindwallet binary config resolution', () => {
       expect(result.code).toBe(0);
       expect(result.stdout).toContain('https://registry.example.test');
       expect(result.stdout).toContain('x402');
+
+      const jsonResult = await runMindwallet({
+        args: ['search', 'registry', '--protocol', 'x402', '--json'],
+        env: {
+          ...process.env,
+          MINDWALLET_REGISTRY_URL: `http://127.0.0.1:${port}`,
+        },
+      });
+
+      expect(jsonResult.code).toBe(0);
+      const parsed = JSON.parse(jsonResult.stdout);
+      expect(parsed[0].origin).toBe('https://registry.example.test');
+      expect(parsed[0].protocols).toContain('x402');
     } finally {
       await new Promise<void>((resolve, reject) =>
         registry.close((error) => (error ? reject(error) : resolve())),

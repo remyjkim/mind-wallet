@@ -9,6 +9,7 @@ export interface SearchCommandOptions {
   registryUrl?: string;
   fetch?: typeof globalThis.fetch;
   output?: (line: string) => void;
+  json?: boolean;
 }
 
 /**
@@ -30,6 +31,11 @@ export async function searchCommand(
     },
     fetchImpl,
   );
+
+  if (options.json) {
+    out(JSON.stringify(records, null, 2));
+    return;
+  }
 
   if (records.length === 0) {
     out('No results found.');

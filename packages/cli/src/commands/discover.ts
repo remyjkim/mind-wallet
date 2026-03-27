@@ -8,6 +8,7 @@ export interface DiscoverCommandOptions {
   methods: RouterMethod[];
   fetch?: typeof globalThis.fetch;
   output?: (line: string) => void;
+  json?: boolean;
 }
 
 /**
@@ -23,17 +24,34 @@ export async function discoverCommand(
   const result = await probeOrigin(origin, options.methods, fetchImpl);
 
   if (!result.reachable) {
+    if (options.json) {
+      out(JSON.stringify(result, null, 2));
+      return;
+    }
     out(`Unreachable: ${result.error ?? 'unknown error'}`);
     return;
   }
 
   if (!result.requires402) {
+    if (options.json) {
+      out(JSON.stringify(result, null, 2));
+      return;
+    }
     out(`${origin}: No payment required (${result.url} returned non-402)`);
     return;
   }
 
   if (result.candidates.length === 0) {
+    if (options.json) {
+      out(JSON.stringify(result, null, 2));
+      return;
+    }
     out(`${origin}: Requires payment but no candidates were parsed`);
+    return;
+  }
+
+  if (options.json) {
+    out(JSON.stringify(result, null, 2));
     return;
   }
 

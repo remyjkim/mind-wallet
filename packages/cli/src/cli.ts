@@ -2,6 +2,7 @@
 // ABOUTME: CLI entry point for the mindwallet command
 // ABOUTME: Parses subcommands and dispatches to wallet, fetch, pay, discover, search, key, or mcp
 
+import { readFileSync } from 'node:fs';
 import { resolveConfig, configPath } from './config.js';
 import { walletCommand } from './commands/wallet.js';
 import { fetchCommand } from './commands/fetch.js';
@@ -13,8 +14,16 @@ import { startMcpServer } from './mcp-server.js';
 import { routerFromConfig } from './router-from-config.js';
 
 const [, , command, ...args] = process.argv;
+const packageVersion = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+).version as string;
 
 async function main() {
+  if (command === '--version' || command === '-V') {
+    console.log(packageVersion);
+    return;
+  }
+
   if (!command || command === 'help' || command === '--help' || command === '-h') {
     printHelp();
     return;
@@ -62,7 +71,8 @@ async function main() {
       return;
     }
     const config = resolveConfig();
-    await discoverCommand(origin, { methods: routerFromConfig(config).methods });
+    const json = args.includes('--json');
+    await discoverCommand(origin, { methods: routerFromConfig(config).methods, json });
     return;
   }
 
@@ -75,7 +85,8 @@ async function main() {
     }
     const protoIdx = args.indexOf('--protocol');
     const protocol = protoIdx >= 0 ? args[protoIdx + 1] : undefined;
-    await searchCommand(query, { protocol });
+    const json = args.includes('--json');
+    await searchCommand(query, { protocol, json });
     return;
   }
 
@@ -146,7 +157,9 @@ Options:
   --verbose, -v                    Show payment and response details (fetch/pay)
   --method <METHOD>                HTTP method for fetch command (default: GET)
   --protocol <proto>               Filter search by protocol (search command)
+  --json                           Print structured JSON for discover/search
   --expires <iso-date>             Key expiry date (key create command)
+  --version, -V                    Print the installed CLI version
 
 Config: ${configPath()}
 `);

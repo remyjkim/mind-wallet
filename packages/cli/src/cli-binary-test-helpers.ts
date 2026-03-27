@@ -2,7 +2,7 @@
 // ABOUTME: Builds the CLI once and captures exit code, stdout, and stderr from dist/cli.js
 
 import { execFile, spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
-import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -24,15 +24,36 @@ export interface CliRunOptions {
 const cliDir = dirname(fileURLToPath(import.meta.url));
 const packageDir = dirname(cliDir);
 const distCliPath = join(packageDir, 'dist', 'cli.js');
+const buildLockDir = join(packageDir, '.build-lock');
 
 let buildOncePromise: Promise<string> | undefined;
 
 export function buildCliOnce(): Promise<string> {
   if (!buildOncePromise) {
-    buildOncePromise = new Promise((resolve, reject) => {
+    buildOncePromise = buildCliWithLock();
+  }
+
+  return buildOncePromise;
+}
+
+async function buildCliWithLock(): Promise<string> {
+  while (true) {
+    try {
+      mkdirSync(buildLockDir);
+      break;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'EEXIST') {
+        throw error;
+      }
+      await sleep(100);
+    }
+  }
+
+  try {
+    await new Promise<void>((resolve, reject) => {
       execFile(
-        'pnpm',
-        ['build'],
+        'bun',
+        ['run', 'build'],
         {
           cwd: packageDir,
           env: process.env,
@@ -43,13 +64,19 @@ export function buildCliOnce(): Promise<string> {
             return;
           }
 
-          resolve(distCliPath);
+          resolve();
         },
       );
     });
-  }
 
-  return buildOncePromise;
+    return distCliPath;
+  } finally {
+    rmSync(buildLockDir, { recursive: true, force: true });
+  }
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export async function runMindwallet(options: CliRunOptions): Promise<CliRunResult> {

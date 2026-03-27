@@ -29,6 +29,14 @@ describe('mindwallet binary help UX', () => {
     expect(result.stderr).toBe('');
   });
 
+  it('prints the package version with --version', async () => {
+    const result = await runMindwallet({ args: ['--version'] });
+
+    expect(result.code).toBe(0);
+    expect(result.stdout.trim()).toBe('0.1.1');
+    expect(result.stderr).toBe('');
+  });
+
   it('prints help with -h', async () => {
     const result = await runMindwallet({ args: ['-h'] });
 
