@@ -9,7 +9,27 @@ import {
   type PolicyRule,
 } from '@mindwallet/core';
 import { createSiwxMethod } from '@mindwallet/protocols';
-import type { MindwalletConfig } from './config.js';
+import type { MindwalletConfig, PolicyRuleConfig } from './config.js';
+
+export function convertPolicy(rules: PolicyRuleConfig[] | undefined): PolicyRule[] {
+  return (rules ?? []).map((rule): PolicyRule => {
+    if (rule.type === 'budget') {
+      return {
+        type: 'budget',
+        currency: rule.currency ?? 'USDC',
+        amount: BigInt(rule.limit ?? '0'),
+        window: rule.window ?? 'daily',
+      };
+    }
+    if (rule.type === 'deny-protocol') {
+      return { type: 'deny-protocol', protocols: [rule.protocol as any] };
+    }
+    if (rule.type === 'prefer-protocol') {
+      return { type: 'prefer-protocol', protocol: rule.protocol as any, boost: rule.boost ?? 0.1 };
+    }
+    throw new Error(`Unknown policy rule type: ${(rule as any).type}`);
+  });
+}
 
 /**
  * Builds a configured MindRouter from the loaded CLI config.
@@ -31,23 +51,7 @@ export function routerFromConfig(config: MindwalletConfig): {
 
   const state = createMemoryStore();
 
-  const policy: PolicyRule[] = (config.policy ?? []).map((rule): PolicyRule => {
-    if (rule.type === 'budget') {
-      return {
-        type: 'budget',
-        currency: rule.currency ?? 'USDC',
-        amount: BigInt(rule.limit ?? '0'),
-        window: rule.window ?? 'daily',
-      };
-    }
-    if (rule.type === 'deny-protocol') {
-      return { type: 'deny-protocol', protocols: [rule.protocol as any] };
-    }
-    if (rule.type === 'prefer-protocol') {
-      return { type: 'prefer-protocol', protocol: rule.protocol as any, boost: rule.boost ?? 0.1 };
-    }
-    throw new Error(`Unknown policy rule type: ${(rule as any).type}`);
-  });
+  const policy = convertPolicy(config.policy);
 
   const router = createRouter({
     methods: [createSiwxMethod()],
