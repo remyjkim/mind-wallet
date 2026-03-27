@@ -2,15 +2,15 @@
 // ABOUTME: CLI entry point for the mindwallet command
 // ABOUTME: Parses subcommands and dispatches to wallet, fetch, pay, discover, search, key, or mcp
 
-import { loadConfig, configPath } from './config.js';
+import { resolveConfig, configPath } from './config.js';
 import { walletCommand } from './commands/wallet.js';
 import { fetchCommand } from './commands/fetch.js';
 import { payCommand } from './commands/pay.js';
 import { discoverCommand } from './commands/discover.js';
 import { searchCommand } from './commands/search.js';
 import { keyCreateCommand, keyRevokeCommand, keyListCommand } from './commands/key.js';
-import { createSiwxMethod } from '@mindwallet/protocols';
 import { startMcpServer } from './mcp-server.js';
+import { routerFromConfig } from './router-from-config.js';
 
 const [, , command, ...args] = process.argv;
 
@@ -21,7 +21,7 @@ async function main() {
   }
 
   if (command === 'wallet') {
-    const config = loadConfig();
+    const config = resolveConfig();
     await walletCommand(config);
     return;
   }
@@ -33,7 +33,7 @@ async function main() {
       process.exitCode = 1;
       return;
     }
-    const config = loadConfig();
+    const config = resolveConfig();
     const verbose = args.includes('--verbose') || args.includes('-v');
     const methodIdx = args.indexOf('--method');
     const method = methodIdx >= 0 ? args[methodIdx + 1] : undefined;
@@ -48,7 +48,7 @@ async function main() {
       process.exitCode = 1;
       return;
     }
-    const config = loadConfig();
+    const config = resolveConfig();
     const verbose = args.includes('--verbose') || args.includes('-v');
     await payCommand(url, config, { verbose });
     return;
@@ -61,7 +61,8 @@ async function main() {
       process.exitCode = 1;
       return;
     }
-    await discoverCommand(origin, { methods: [createSiwxMethod()] });
+    const config = resolveConfig();
+    await discoverCommand(origin, { methods: routerFromConfig(config).methods });
     return;
   }
 
@@ -80,7 +81,7 @@ async function main() {
 
   if (command === 'key') {
     const sub = args[0];
-    const config = loadConfig();
+    const config = resolveConfig();
 
     if (sub === 'create') {
       const name = args[1];
@@ -117,7 +118,7 @@ async function main() {
   }
 
   if (command === 'mcp') {
-    const config = loadConfig();
+    const config = resolveConfig();
     await startMcpServer(config);
     return;
   }
