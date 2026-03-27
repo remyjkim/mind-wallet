@@ -1,0 +1,15 @@
+{
+  "name": "@examples/ows",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "bootstrap": "node ./scripts/setup.mjs",
+    "start": "node ./src/index.mjs",
+    "check": "node --test"
+  },
+  "dependencies": {
+    "@mindwallet/core": "workspace:*",
+    "@open-wallet-standard/core": "^1.0.0",
+    "mindwallet": "workspace:*"
+  }
+}

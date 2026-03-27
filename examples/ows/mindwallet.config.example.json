@@ -1,0 +1,11 @@
+{
+  "walletId": "example-wallet",
+  "vaultPath": "./.demo/vault",
+  "policy": [
+    {
+      "type": "prefer-protocol",
+      "protocol": "siwx",
+      "boost": 0.1
+    }
+  ]
+}
