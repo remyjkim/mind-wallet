@@ -5,9 +5,6 @@ class Mindwallet < Formula
   sha256 ENV.fetch("MINDWALLET_FORMULA_SHA256", "0000000000000000000000000000000000000000000000000000000000000000")
   license "MIT"
 
-  formula_version = ENV["MINDWALLET_FORMULA_VERSION"]
-  version formula_version if formula_version
-
   depends_on "oven-sh/bun/bun" => :build
 
   def install

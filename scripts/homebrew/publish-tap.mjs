@@ -48,7 +48,6 @@ function renderFormula({ version, url, sha256 }) {
   url "${url}"
   sha256 "${sha256}"
   license "MIT"
-  version "${version}"
 
   depends_on "oven-sh/bun/bun" => :build
 

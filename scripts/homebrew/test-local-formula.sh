@@ -3,8 +3,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 TMPDIR="$(mktemp -d)"
-ARCHIVE="$TMPDIR/mindwallet-local.tar.gz"
 VERSION="$(node -p "require('$ROOT/packages/cli/package.json').version")"
+ARCHIVE="$TMPDIR/mindwallet-$VERSION.tar.gz"
 TAP_NAME="local/mindwallet-test-$$"
 TAP_DIR="$(brew --repository)/Library/Taps/local/homebrew-mindwallet-test-$$"
 
