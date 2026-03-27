@@ -7,7 +7,7 @@ This directory is the source of truth for the native `mindwallet` Homebrew packa
 The intended install path is:
 
 ```bash
-brew install remyjkim/tap/mindwallet
+brew install remyjkim/mindwallet/mindwallet
 ```
 
 The formula should produce a native `mindwallet` executable with no `npm` or `node` runtime dependency for end users.
@@ -48,10 +48,16 @@ node scripts/homebrew/publish-tap.mjs \
   --tap-path /path/to/homebrew-mindwallet
 ```
 
-4. In the tap repo, run:
+4. Verify the live tap in this exact order:
 
 ```bash
-brew audit --strict --formula ./Formula/mindwallet.rb
-brew install --build-from-source ./Formula/mindwallet.rb
+brew install --build-from-source remyjkim/mindwallet/mindwallet
 brew test mindwallet
+brew audit --strict remyjkim/mindwallet/mindwallet
 ```
+
+Important:
+
+- Do not run `brew audit` concurrently with `brew uninstall` or `brew install`.
+- Homebrew audit inspects the currently installed keg prefix, so parallel reinstall activity can produce a false "installation seems to be empty" warning.
+- The repository script [`scripts/homebrew/verify-live-tap.sh`](../../scripts/homebrew/verify-live-tap.sh) runs the checks in the correct serialized order.
