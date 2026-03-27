@@ -1,0 +1,19 @@
+name: test-homebrew
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-local-formula:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.15
+      - run: bun install --frozen-lockfile
+      - run: brew tap oven-sh/bun
+      - run: bash scripts/homebrew/test-local-formula.sh

@@ -1,10 +1,14 @@
 // ABOUTME: Black-box tests for the compiled mindwallet binary help and usage UX
 // ABOUTME: Verifies process-level exit codes and stdio output for the real CLI entrypoint
 
-import { describe, expect, it } from 'vitest';
-import { runMindwallet } from './cli-binary-test-helpers.js';
+import { beforeAll, describe, expect, it } from 'vitest';
+import { buildCliOnce, runMindwallet } from './cli-binary-test-helpers.js';
 
 describe('mindwallet binary help UX', () => {
+  beforeAll(async () => {
+    await buildCliOnce();
+  }, 60_000);
+
   it('prints help with no arguments', async () => {
     const result = await runMindwallet({ args: [] });
 
@@ -33,7 +37,7 @@ describe('mindwallet binary help UX', () => {
     const result = await runMindwallet({ args: ['--version'] });
 
     expect(result.code).toBe(0);
-    expect(result.stdout.trim()).toBe('0.1.1');
+    expect(result.stdout.trim()).toBe('0.2.0');
     expect(result.stderr).toBe('');
   });
 

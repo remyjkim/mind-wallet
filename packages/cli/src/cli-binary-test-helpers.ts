@@ -2,7 +2,7 @@
 // ABOUTME: Builds the CLI once and captures exit code, stdout, and stderr from dist/cli.js
 
 import { execFile, spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -23,6 +23,7 @@ export interface CliRunOptions {
 
 const cliDir = dirname(fileURLToPath(import.meta.url));
 const packageDir = dirname(cliDir);
+const repoRoot = join(packageDir, '..', '..');
 const distCliPath = join(packageDir, 'dist', 'cli.js');
 const buildLockDir = join(packageDir, '.build-lock');
 
@@ -30,6 +31,7 @@ let buildOncePromise: Promise<string> | undefined;
 
 export function buildCliOnce(): Promise<string> {
   if (!buildOncePromise) {
+    rmSync(buildLockDir, { recursive: true, force: true });
     buildOncePromise = buildCliWithLock();
   }
 
@@ -53,9 +55,12 @@ async function buildCliWithLock(): Promise<string> {
     await new Promise<void>((resolve, reject) => {
       execFile(
         'bun',
-        ['run', 'build'],
+        [
+          'run',
+          '--filter', '@mindwallet/core', 'build',
+        ],
         {
-          cwd: packageDir,
+          cwd: repoRoot,
           env: process.env,
         },
         (error) => {
@@ -64,7 +69,61 @@ async function buildCliWithLock(): Promise<string> {
             return;
           }
 
-          resolve();
+          execFile(
+            'bun',
+            [
+              'run',
+              '--filter', '@mindwallet/protocols', 'build',
+            ],
+            {
+              cwd: repoRoot,
+              env: process.env,
+            },
+            (error2) => {
+              if (error2) {
+                reject(error2);
+                return;
+              }
+
+              execFile(
+                'bun',
+                [
+                  'run',
+                  '--filter', '@mindwallet/discovery', 'build',
+                ],
+                {
+                  cwd: repoRoot,
+                  env: process.env,
+                },
+                (error3) => {
+                  if (error3) {
+                    reject(error3);
+                    return;
+                  }
+
+                  execFile(
+                    'bun',
+                    [
+                      'run',
+                      '--filter', 'mindwallet', 'build',
+                    ],
+                    {
+                      cwd: repoRoot,
+                      env: process.env,
+                    },
+                    (error4) => {
+                      if (error4) {
+                        reject(error4);
+                        return;
+                      }
+
+                      resolve();
+                    },
+                  );
+                },
+              );
+            },
+          );
         },
       );
     });
@@ -116,6 +175,7 @@ export async function runMindwallet(options: CliRunOptions): Promise<CliRunResul
 }
 
 export async function spawnMindwallet(options: CliRunOptions): Promise<ChildProcessWithoutNullStreams> {
+  await waitForBuildToSettle();
   const cliPath = await buildCliOnce();
 
   const child = spawn(process.execPath, [cliPath, ...options.args], {
@@ -125,6 +185,12 @@ export async function spawnMindwallet(options: CliRunOptions): Promise<ChildProc
   });
 
   return child;
+}
+
+async function waitForBuildToSettle(): Promise<void> {
+  while (existsSync(buildLockDir)) {
+    await sleep(50);
+  }
 }
 
 export function makeTempConfigHome(): string {

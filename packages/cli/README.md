@@ -5,6 +5,12 @@ CLI and MCP server for payment-gated HTTP APIs across SIWX, x402, and Tempo-comp
 ## Install
 
 ```bash
+brew install remyjkim/tap/mindwallet
+```
+
+Alternate install path:
+
+```bash
 npm install -g mindwallet
 ```
 

@@ -2,6 +2,16 @@
 
 All notable changes to this project should be documented in this file.
 
+## 0.2.0
+
+### Packaging
+
+- added a native CLI build pipeline based on `bun build --compile`
+- added lazy and explicit OWS native-addon loading for compiled binaries
+- added a Homebrew formula template, local formula verification script, and tap publishing helper
+- added release workflows for native artifacts and checksum generation
+- made Homebrew the primary documented CLI install path, with npm retained as a fallback
+
 ## 0.1.1
 
 ### CLI

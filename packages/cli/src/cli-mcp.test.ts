@@ -1,12 +1,16 @@
 // ABOUTME: Black-box tests for binary MCP startup behavior
 // ABOUTME: Verifies the compiled CLI can start or fail correctly in MCP mode
 
-import { afterEach, describe, expect, it } from 'vitest';
-import { makeTempConfigHome, spawnMindwallet, writeRawConfig } from './cli-binary-test-helpers.js';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { buildCliOnce, makeTempConfigHome, spawnMindwallet, writeRawConfig } from './cli-binary-test-helpers.js';
 import { TEST_PRIVATE_KEY } from './test-helpers.js';
 
 describe('mindwallet binary mcp startup', () => {
   const children: Array<{ kill: (signal?: NodeJS.Signals) => boolean; once: Function }> = [];
+
+  beforeAll(async () => {
+    await buildCliOnce();
+  }, 60_000);
 
   afterEach(async () => {
     await Promise.all(children.splice(0).map(

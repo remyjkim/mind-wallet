@@ -3,25 +3,25 @@
 
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { createApiKey, revokeApiKey, listApiKeys } from '@open-wallet-standard/core';
 import type { MindwalletConfig } from '../config.js';
+import { loadOws, type OwsBindings } from '../ows/load-ows.js';
 
 const DEFAULT_WALLET_ID = 'default';
 const DEFAULT_VAULT_PATH = join(homedir(), '.minds', 'wallet', 'vault');
 
 export interface KeyCreateOptions {
   expiresAt?: string;
-  owsCreate?: typeof createApiKey;
+  owsCreate?: OwsBindings['createApiKey'];
   output?: (line: string) => void;
 }
 
 export interface KeyRevokeOptions {
-  owsRevoke?: typeof revokeApiKey;
+  owsRevoke?: OwsBindings['revokeApiKey'];
   output?: (line: string) => void;
 }
 
 export interface KeyListOptions {
-  owsList?: typeof listApiKeys;
+  owsList?: OwsBindings['listApiKeys'];
   output?: (line: string) => void;
 }
 
@@ -34,7 +34,7 @@ export async function keyCreateCommand(
   options: KeyCreateOptions = {},
 ): Promise<void> {
   const out = options.output ?? console.log;
-  const create = options.owsCreate ?? createApiKey;
+  const create = options.owsCreate ?? (await loadOws()).createApiKey;
   const passphrase = config.passphrase ?? process.env['OWS_PASSPHRASE'] ?? '';
   const walletId = config.walletId ?? DEFAULT_WALLET_ID;
   const vaultPath = config.vaultPath ?? DEFAULT_VAULT_PATH;
@@ -64,7 +64,7 @@ export async function keyRevokeCommand(
   options: KeyRevokeOptions = {},
 ): Promise<void> {
   const out = options.output ?? console.log;
-  const revoke = options.owsRevoke ?? revokeApiKey;
+  const revoke = options.owsRevoke ?? (await loadOws()).revokeApiKey;
   const vaultPath = config.vaultPath ?? DEFAULT_VAULT_PATH;
 
   revoke(id, vaultPath);
@@ -79,7 +79,7 @@ export async function keyListCommand(
   options: KeyListOptions = {},
 ): Promise<void> {
   const out = options.output ?? console.log;
-  const list = options.owsList ?? listApiKeys;
+  const list = options.owsList ?? (await loadOws()).listApiKeys;
   const vaultPath = config.vaultPath ?? DEFAULT_VAULT_PATH;
 
   const keys = list(vaultPath) as Array<{ id: string; name: string; createdAt?: string }>;

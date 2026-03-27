@@ -2,7 +2,6 @@
 // ABOUTME: CLI entry point for the mindwallet command
 // ABOUTME: Parses subcommands and dispatches to wallet, fetch, pay, discover, search, key, or mcp
 
-import { readFileSync } from 'node:fs';
 import { resolveConfig, configPath } from './config.js';
 import { walletCommand } from './commands/wallet.js';
 import { fetchCommand } from './commands/fetch.js';
@@ -12,15 +11,13 @@ import { searchCommand } from './commands/search.js';
 import { keyCreateCommand, keyRevokeCommand, keyListCommand } from './commands/key.js';
 import { startMcpServer } from './mcp-server.js';
 import { routerFromConfig } from './router-from-config.js';
+import { CLI_VERSION } from './version.js';
 
 const [, , command, ...args] = process.argv;
-const packageVersion = JSON.parse(
-  readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
-).version as string;
 
 async function main() {
   if (command === '--version' || command === '-V') {
-    console.log(packageVersion);
+    console.log(CLI_VERSION);
     return;
   }
 

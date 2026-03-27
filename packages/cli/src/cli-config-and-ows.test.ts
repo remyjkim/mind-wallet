@@ -4,7 +4,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createServer } from 'node:http';
 import type { TestServerHandle } from '@mindwallet/test-server';
-import { runMindwallet, makeTempConfigHome, writeRawConfig } from './cli-binary-test-helpers.js';
+import { buildCliOnce, runMindwallet, makeTempConfigHome, writeRawConfig } from './cli-binary-test-helpers.js';
 import {
   createTempOwsFixture,
   startLocalPaymentTestServer,
@@ -18,13 +18,14 @@ describe('mindwallet binary config resolution', () => {
   let siwxServer: SiwxTestServer;
 
   beforeAll(async () => {
+    await buildCliOnce();
     server = await startLocalPaymentTestServer();
     siwxServer = await startSiwxTestServer();
-  });
+  }, 60_000);
 
   afterAll(async () => {
-    await server.close();
-    await siwxServer.close();
+    if (server) await server.close();
+    if (siwxServer) await siwxServer.close();
   });
 
   it('accepts MINDWALLET_PRIVATE_KEY without a config file for pay flows', async () => {

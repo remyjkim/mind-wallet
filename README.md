@@ -7,7 +7,10 @@ AI agents need to pay for APIs, authenticate their identity, and manage budgets 
 mindwallet solves this by wrapping `fetch()` with an intelligent payment layer that automatically detects, evaluates, and resolves HTTP 402 challenges across all major agent payment protocols. Your agent writes `fetch(url)` and mindwallet handles the rest — protocol detection, candidate scoring, policy enforcement, credential signing, and retry.
 
 ```bash
-# Fastest path: use the CLI with a private key wallet
+# Preferred native install
+brew install remyjkim/tap/mindwallet
+
+# Alternate package-manager install
 npm install -g mindwallet
 
 export MINDWALLET_PRIVATE_KEY=0x...
@@ -37,6 +40,9 @@ mindwallet fetch https://paid-api.example.com/data
 ### CLI
 
 ```bash
+brew install remyjkim/tap/mindwallet
+
+# Alternate npm path
 npm install -g mindwallet
 
 # Private key mode (fastest — one env var, all protocols enabled)
@@ -172,7 +178,7 @@ Resolution order: **env vars > config file > defaults**. See the [env vars guide
 
 ### Private key CLI
 
-- Install `mindwallet`
+- Install `mindwallet` with Homebrew
 - Set `MINDWALLET_PRIVATE_KEY`
 - Run `mindwallet fetch <url>` or `mindwallet pay <url>`
 

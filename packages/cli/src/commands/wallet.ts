@@ -3,8 +3,8 @@
 
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { getWallet } from '@open-wallet-standard/core';
 import type { MindwalletConfig } from '../config.js';
+import { loadOws } from '../ows/load-ows.js';
 
 const DEFAULT_WALLET_ID = 'default';
 const DEFAULT_VAULT_PATH = join(homedir(), '.minds', 'wallet', 'vault');
@@ -15,6 +15,7 @@ const DEFAULT_VAULT_PATH = join(homedir(), '.minds', 'wallet', 'vault');
 export async function walletCommand(config: MindwalletConfig): Promise<void> {
   const walletId = config.walletId ?? DEFAULT_WALLET_ID;
   const vaultPath = config.vaultPath ?? DEFAULT_VAULT_PATH;
+  const { getWallet } = await loadOws();
   const wallet = getWallet(walletId, vaultPath);
 
   console.log(`Wallet: ${walletId}`);

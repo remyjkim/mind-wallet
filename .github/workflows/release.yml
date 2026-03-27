@@ -1,0 +1,49 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-native:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-14
+            target: darwin-arm64
+          - runner: macos-13
+            target: darwin-x64
+          - runner: ubuntu-24.04
+            target: linux-x64
+          - runner: ubuntu-24.04-arm
+            target: linux-arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.15
+      - run: brew tap oven-sh/bun
+      - run: bun install --frozen-lockfile
+      - run: bun run test
+      - run: bun run native:build --target ${{ matrix.target }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mindwallet-${{ matrix.target }}
+          path: dist/native/${{ matrix.target }}
+
+  publish-release:
+    needs: build-native
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+      - run: node scripts/release/generate-checksums.mjs --dir release-artifacts
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release-artifacts/**/*

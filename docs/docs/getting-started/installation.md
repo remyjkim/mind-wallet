@@ -7,6 +7,12 @@ sidebar_position: 1
 ## CLI (recommended for agents)
 
 ```bash
+brew install remyjkim/tap/mindwallet
+```
+
+Alternate install path:
+
+```bash
 npm install -g mindwallet
 ```
 
