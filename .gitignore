@@ -41,3 +41,6 @@ Thumbs.db
 
 # Docusaurus
 .docusaurus/
+
+# Internal working docs
+.ai/
