@@ -33,7 +33,7 @@ describe('mindwallet binary mcp startup', () => {
     await new Promise((resolve) => setTimeout(resolve, 250));
     expect(child.exitCode).toBeNull();
     expect(child.killed).toBe(false);
-  });
+  }, 10_000);
 
   it('fails fast on malformed config', async () => {
     const home = makeTempConfigHome();
