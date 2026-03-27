@@ -25,9 +25,7 @@ export function x402Paywall(config: X402Config): MiddlewareHandler {
   return async (c, next) => {
     const paymentHeader =
       c.req.header('x-payment') ??
-      c.req.header('payment-signature') ??
-      c.req.header('X-PAYMENT') ??
-      c.req.header('PAYMENT-SIGNATURE');
+      c.req.header('payment-signature');
 
     const resource = new URL(c.req.url).pathname;
     const paymentRequired = {
