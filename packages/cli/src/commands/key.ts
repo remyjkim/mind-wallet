@@ -1,8 +1,13 @@
 // ABOUTME: CLI commands for managing OWS API keys (create, revoke, list)
 // ABOUTME: API keys grant agents access to wallet signing without exposing the passphrase
 
+import { homedir } from 'node:os';
+import { join } from 'node:path';
 import { createApiKey, revokeApiKey, listApiKeys } from '@open-wallet-standard/core';
 import type { MindwalletConfig } from '../config.js';
+
+const DEFAULT_WALLET_ID = 'default';
+const DEFAULT_VAULT_PATH = join(homedir(), '.minds', 'wallet', 'vault');
 
 export interface KeyCreateOptions {
   expiresAt?: string;
@@ -31,14 +36,16 @@ export async function keyCreateCommand(
   const out = options.output ?? console.log;
   const create = options.owsCreate ?? createApiKey;
   const passphrase = config.passphrase ?? process.env['OWS_PASSPHRASE'] ?? '';
+  const walletId = config.walletId ?? DEFAULT_WALLET_ID;
+  const vaultPath = config.vaultPath ?? DEFAULT_VAULT_PATH;
 
   const result = create(
     name,
-    [config.walletId],
+    [walletId],
     [],
     passphrase,
     options.expiresAt,
-    config.vaultPath,
+    vaultPath,
   );
 
   out(`Key created:`);
@@ -58,8 +65,9 @@ export async function keyRevokeCommand(
 ): Promise<void> {
   const out = options.output ?? console.log;
   const revoke = options.owsRevoke ?? revokeApiKey;
+  const vaultPath = config.vaultPath ?? DEFAULT_VAULT_PATH;
 
-  revoke(id, config.vaultPath);
+  revoke(id, vaultPath);
   out(`Key ${id} revoked.`);
 }
 
@@ -72,8 +80,9 @@ export async function keyListCommand(
 ): Promise<void> {
   const out = options.output ?? console.log;
   const list = options.owsList ?? listApiKeys;
+  const vaultPath = config.vaultPath ?? DEFAULT_VAULT_PATH;
 
-  const keys = list(config.vaultPath) as Array<{ id: string; name: string; createdAt?: string }>;
+  const keys = list(vaultPath) as Array<{ id: string; name: string; createdAt?: string }>;
 
   if (keys.length === 0) {
     out('No API keys found.');

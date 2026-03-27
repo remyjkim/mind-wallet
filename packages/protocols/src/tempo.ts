@@ -7,6 +7,25 @@ import type { RouterMethod, PaymentCandidate, NormalizedPayment, RouterStateStor
 import type { Account as ViemAccount } from 'viem';
 import { createPublicClient, http } from 'viem';
 
+function challengeRequestFromRaw(raw: Record<string, unknown>): Record<string, unknown> {
+  const encodedRequest = raw['request'];
+  if (typeof encodedRequest === 'string') {
+    return JSON.parse(Buffer.from(encodedRequest, 'base64url').toString('utf8')) as Record<string, unknown>;
+  }
+
+  const request = { ...raw };
+  delete request['id'];
+  delete request['realm'];
+  delete request['method'];
+  delete request['intent'];
+  delete request['expires'];
+  delete request['request'];
+  delete request['description'];
+  delete request['digest'];
+  delete request['opaque'];
+  return request;
+}
+
 export interface TempoMethodConfig {
   /** viem Account used for signing charge and session credentials. */
   account: ViemAccount;
@@ -31,7 +50,11 @@ export interface TempoMethodConfig {
 export function createTempoMethod(config: TempoMethodConfig): RouterMethod {
   const chargeClient = MppxMethod.toClient(TempoMethods.charge, {
     async createCredential({ challenge }) {
-      const chainId = (challenge.request as Record<string, unknown>)['chainId'] as number | undefined;
+      const request = challenge.request as Record<string, unknown>;
+      const methodDetails = request['methodDetails'] as Record<string, unknown> | undefined;
+      const chainId =
+        (request['chainId'] as number | undefined) ??
+        (methodDetails?.['chainId'] as number | undefined);
       const rpcUrl = config.rpcUrl ?? `https://rpc.${chainId === 42431 ? 'moderato.' : ''}tempo.xyz`;
 
       const { prepareTransactionRequest, signTransaction } = await import('viem/actions');
@@ -44,7 +67,7 @@ export function createTempoMethod(config: TempoMethodConfig): RouterMethod {
         transport: http(rpcUrl),
       });
 
-      const req = challenge.request as Record<string, unknown>;
+      const req = request;
       const transferCall = Actions.token.transfer.call({
         amount: BigInt(req['amount'] as string),
         to: req['recipient'] as `0x${string}`,
@@ -141,12 +164,15 @@ export function createTempoMethod(config: TempoMethodConfig): RouterMethod {
     },
 
     async createCredential({ candidate }): Promise<Record<string, string>> {
+      const raw = candidate.raw as Record<string, unknown>;
       const challenge = Challenge.from({
-        id: candidate.id,
-        realm: candidate.normalized.realm,
+        id: String(raw['id'] ?? candidate.id),
+        realm: String(raw['realm'] ?? candidate.normalized.realm),
         method: 'tempo',
         intent: candidate.normalized.intent,
-        request: candidate.raw as Record<string, unknown>,
+        request: challengeRequestFromRaw(raw),
+        ...(typeof raw['expires'] === 'string' ? { expires: raw['expires'] } : {}),
+        ...(typeof raw['digest'] === 'string' ? { digest: raw['digest'] } : {}),
       }) as any;
 
       let authorization: string;

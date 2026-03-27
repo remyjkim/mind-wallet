@@ -2,6 +2,11 @@
 // ABOUTME: Provides a local SIWX test server and OWS vault setup helpers
 
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import { startTestServer, type TestServerHandle } from '@mindwallet/test-server';
+import type { MindwalletConfig } from './config.js';
+
+export const TEST_PRIVATE_KEY =
+  '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80' as const;
 
 export interface SiwxTestServer {
   port: number;
@@ -56,5 +61,21 @@ export function startSiwxTestServer(): Promise<SiwxTestServer> {
         close: () => new Promise<void>((r) => server.close(() => r())),
       });
     });
+  });
+}
+
+export function makePrivateKeyConfig(overrides: Partial<MindwalletConfig> = {}): MindwalletConfig {
+  return {
+    privateKey: TEST_PRIVATE_KEY,
+    chainIds: ['eip155:8453'],
+    ...overrides,
+  };
+}
+
+export async function startLocalPaymentTestServer(): Promise<TestServerHandle> {
+  return startTestServer({
+    x402PayTo: '0x0000000000000000000000000000000000000001',
+    mppRecipient: '0x0000000000000000000000000000000000000001',
+    mppWaitForConfirmation: false,
   });
 }

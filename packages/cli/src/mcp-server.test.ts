@@ -9,11 +9,22 @@ import { join } from 'node:path';
 import { createWallet } from '@open-wallet-standard/core';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
+import type { TestServerHandle } from '@mindwallet/test-server';
 import { createMcpServer } from './mcp-server.js';
 import type { MindwalletConfig } from './config.js';
-import { startSiwxTestServer, type SiwxTestServer } from './test-helpers.js';
+import {
+  makePrivateKeyConfig,
+  startLocalPaymentTestServer,
+  startSiwxTestServer,
+  type SiwxTestServer,
+} from './test-helpers.js';
 
 const skip = !process.env['RUN_INTEGRATION_TESTS'] || !process.env['OWS_PASSPHRASE'];
+const pkSkip = !process.env['RUN_INTEGRATION_TESTS'];
+const tempoSkip =
+  !process.env['RUN_INTEGRATION_TESTS'] ||
+  !process.env['TEST_PRIVATE_KEY'] ||
+  !process.env['TEMPO_RPC_URL'];
 
 // ---------------------------------------------------------------------------
 // Error server (unique to this test file)
@@ -116,5 +127,101 @@ describe.skipIf(skip)('MCP server tools: SIWX 402 integration (local server)', (
     expect(result.isError).toBe(true);
     const text = (result.content as Array<{ type: string; text: string }>)[0].text;
     expect(text).toContain('Unreachable');
+  });
+});
+
+describe.skipIf(pkSkip)('MCP server tools: private key x402 integration', () => {
+  let server: TestServerHandle;
+  let client: Client;
+
+  beforeAll(async () => {
+    server = await startLocalPaymentTestServer();
+    const mcpServer = createMcpServer(makePrivateKeyConfig({ chainIds: ['eip155:84532'] }));
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    client = new Client({ name: 'test-client', version: '0.0.1' });
+    await Promise.all([client.connect(clientTransport), mcpServer.connect(serverTransport)]);
+  });
+
+  afterAll(async () => {
+    await server.close();
+  });
+
+  it('fetch_with_payment resolves x402 and returns paid content', async () => {
+    const result = await client.callTool({
+      name: 'fetch_with_payment',
+      arguments: { url: `${server.url}/x402/data` },
+    });
+    const text = (result.content as Array<{ type: string; text: string }>)[0].text;
+    expect(text).toContain('paid x402 content');
+    expect(result.isError).toBeFalsy();
+  });
+
+  it('probe_origin detects x402 candidates', async () => {
+    const result = await client.callTool({
+      name: 'probe_origin',
+      arguments: { url: `${server.url}/x402/data` },
+    });
+    const parsed = JSON.parse((result.content as Array<{ type: string; text: string }>)[0].text);
+    expect(parsed.requires402).toBe(true);
+    expect(parsed.candidates[0].protocol).toBe('x402');
+  });
+});
+
+describe.skipIf(pkSkip)('MCP server tools: local Tempo challenge discovery', () => {
+  let server: TestServerHandle;
+  let client: Client;
+
+  beforeAll(async () => {
+    server = await startLocalPaymentTestServer();
+    const mcpServer = createMcpServer(makePrivateKeyConfig());
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    client = new Client({ name: 'test-client', version: '0.0.1' });
+    await Promise.all([client.connect(clientTransport), mcpServer.connect(serverTransport)]);
+  });
+
+  afterAll(async () => {
+    await server.close();
+  });
+
+  it('probe_origin detects tempo candidates from local MPP challenge', async () => {
+    const result = await client.callTool({
+      name: 'probe_origin',
+      arguments: { url: `${server.url}/mpp/data` },
+    });
+    const parsed = JSON.parse((result.content as Array<{ type: string; text: string }>)[0].text);
+    expect(parsed.requires402).toBe(true);
+    expect(parsed.candidates.some((c: { method: string }) => c.method === 'tempo')).toBe(true);
+  });
+});
+
+describe.skipIf(tempoSkip)('MCP server tools: live Tempo integration', () => {
+  let server: TestServerHandle;
+  let client: Client;
+
+  beforeAll(async () => {
+    server = await startLocalPaymentTestServer();
+    const mcpServer = createMcpServer({
+      privateKey: process.env['TEST_PRIVATE_KEY'] as `0x${string}`,
+      chainIds: ['eip155:42431'],
+      rpcUrls: { tempo: process.env['TEMPO_RPC_URL']! },
+      tempoGas: '200000',
+    });
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    client = new Client({ name: 'test-client', version: '0.0.1' });
+    await Promise.all([client.connect(clientTransport), mcpServer.connect(serverTransport)]);
+  });
+
+  afterAll(async () => {
+    await server.close();
+  });
+
+  it('fetch_with_payment resolves a local Tempo challenge and returns paid content', async () => {
+    const result = await client.callTool({
+      name: 'fetch_with_payment',
+      arguments: { url: `${server.url}/mpp/data` },
+    });
+    const text = (result.content as Array<{ type: string; text: string }>)[0].text;
+    expect(text).toContain('paid mpp content');
+    expect(result.isError).toBeFalsy();
   });
 });

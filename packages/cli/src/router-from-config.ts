@@ -1,16 +1,21 @@
 // ABOUTME: Builds a MindRouter from a MindwalletConfig, wiring protocols and policy rules
-// ABOUTME: Creates OWS wallet adapter, instantiates methods, and calls createRouter
+// ABOUTME: Supports both OWS vault wallets (SIWX) and private key wallets (SIWX + x402 + Tempo)
 
+import { join } from 'node:path';
+import { homedir } from 'node:os';
+import { privateKeyToAccount } from 'viem/accounts';
 import {
   OwsWalletAdapter,
+  PrivateKeyWalletAdapter,
   createMemoryStore,
   createRouter,
   type MindRouter,
   type PolicyRule,
   type RouterMethod,
   type RouterStateStore,
+  type WalletAdapter,
 } from '@mindwallet/core';
-import { createSiwxMethod } from '@mindwallet/protocols';
+import { createSiwxMethod, createTempoMethod, createX402Method } from '@mindwallet/protocols';
 import type { MindwalletConfig, PolicyRuleConfig } from './config.js';
 
 export function convertPolicy(rules: PolicyRuleConfig[] | undefined): PolicyRule[] {
@@ -41,27 +46,49 @@ export function convertPolicy(rules: PolicyRuleConfig[] | undefined): PolicyRule
  */
 export interface RouterContext {
   router: MindRouter;
-  wallet: OwsWalletAdapter;
+  wallet: WalletAdapter;
   state: RouterStateStore;
   methods: RouterMethod[];
 }
 
 export function routerFromConfig(config: MindwalletConfig): RouterContext {
+  const state = createMemoryStore();
+  const userPolicy = convertPolicy(config.policy);
+
+  if (config.privateKey && config.walletId) {
+    throw new Error('Cannot set both privateKey and walletId');
+  }
+
+  if (config.privateKey) {
+    const account = privateKeyToAccount(config.privateKey);
+    const wallet = new PrivateKeyWalletAdapter({
+      privateKey: config.privateKey,
+      chainIds: config.chainIds,
+    });
+    const methods: RouterMethod[] = [
+      createSiwxMethod(),
+      createX402Method({ account }),
+      createTempoMethod({
+        account,
+        rpcUrl: config.rpcUrls?.['tempo'],
+        gas: config.tempoGas !== undefined ? BigInt(config.tempoGas) : undefined,
+        store: state,
+      }),
+    ];
+    const policy: PolicyRule[] = [
+      ...userPolicy,
+      { type: 'prefer-protocol', protocol: 'x402' as any, boost: 0.1 },
+    ];
+    const router = createRouter({ methods, state, policy });
+    return { router, wallet, state, methods };
+  }
+
   const wallet = new OwsWalletAdapter({
-    walletId: config.walletId,
-    vaultPath: config.vaultPath,
+    walletId: config.walletId ?? 'default',
+    vaultPath: config.vaultPath ?? join(homedir(), '.minds', 'wallet', 'vault'),
     passphrase: config.passphrase,
   });
-
-  const methods = [createSiwxMethod()];
-  const state = createMemoryStore();
-  const policy = convertPolicy(config.policy);
-
-  const router = createRouter({
-    methods,
-    state,
-    policy,
-  });
-
+  const methods: RouterMethod[] = [createSiwxMethod()];
+  const router = createRouter({ methods, state, policy: userPolicy });
   return { router, wallet, state, methods };
 }

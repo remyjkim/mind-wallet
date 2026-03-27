@@ -56,4 +56,38 @@ describe.skipIf(skip)('createTempoMethod — createCredential (integration)', ()
     expect(typeof headers['Authorization']).toBe('string');
     expect((headers['Authorization'] as string).length).toBeGreaterThan(10);
   });
+
+  it('supports chainId nested under methodDetails for charge intents', async () => {
+    const candidate = {
+      id: 'c2',
+      protocol: 'mpp' as const,
+      method,
+      normalized: {
+        realm: 'https://api.example.com',
+        protocol: 'mpp' as const,
+        method: 'tempo',
+        intent: 'charge' as const,
+        amount: 1_000_000n,
+        currency: '0x20c0000000000000000000000000000000000000',
+        hasDigestBinding: false,
+      },
+      raw: {
+        realm: 'https://api.example.com',
+        method: 'tempo',
+        intent: 'charge',
+        amount: '1000000',
+        recipient: '0x0000000000000000000000000000000000000001' as `0x${string}`,
+        currency: '0x20c0000000000000000000000000000000000000' as `0x${string}`,
+        methodDetails: {
+          chainId: 42431,
+        },
+      },
+      eligible: true,
+    };
+
+    const headers = await method.createCredential({ candidate, wallet: null as any });
+    expect(headers['Authorization']).toBeDefined();
+    expect(typeof headers['Authorization']).toBe('string');
+    expect((headers['Authorization'] as string).length).toBeGreaterThan(10);
+  });
 });
