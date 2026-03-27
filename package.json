@@ -1,11 +1,17 @@
 {
   "name": "mindwallet-monorepo",
   "private": true,
+  "packageManager": "bun@1.2.15",
+  "workspaces": [
+    "packages/*",
+    "examples/*",
+    "docs"
+  ],
   "scripts": {
-    "build": "pnpm -r --topological-dev build",
-    "test": "pnpm -r test",
-    "typecheck": "pnpm run build && pnpm -r typecheck",
-    "check": "pnpm run build && pnpm -r check"
+    "build": "bun run --filter @mindwallet/test-server build && bun run --filter @mindwallet/core build && bun run --filter @mindwallet/protocols build && bun run --filter @mindwallet/discovery build && bun run --filter mindwallet build && bun run --filter mindwallet-docs build",
+    "test": "bun run --filter @mindwallet/core test && bun run --filter @mindwallet/protocols test && bun run --filter @mindwallet/discovery test && bun run --filter mindwallet test",
+    "typecheck": "bun run --filter @mindwallet/test-server typecheck && bun run --filter @mindwallet/core typecheck && bun run --filter @mindwallet/protocols typecheck && bun run --filter @mindwallet/discovery typecheck && bun run --filter mindwallet typecheck && bun run --filter mindwallet-docs typecheck",
+    "check": "bun run --filter @mindwallet/test-server check && bun run --filter @mindwallet/core check && bun run --filter @mindwallet/protocols check && bun run --filter @mindwallet/discovery check && bun run --filter mindwallet check && bun run --filter mindwallet-docs check && bun run --filter @examples/ows check"
   },
   "devDependencies": {
     "typescript": "^5.4.0",

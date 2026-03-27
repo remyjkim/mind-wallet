@@ -5,19 +5,8 @@
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-
-const { createWallet, exportWallet } = await import(
-  new URL(
-    '../node_modules/.pnpm/@open-wallet-standard+core@1.0.0/node_modules/@open-wallet-standard/core/index.js',
-    import.meta.url,
-  ).pathname
-);
-const { mnemonicToAccount } = await import(
-  new URL(
-    '../packages/protocols/node_modules/viem/_esm/accounts/index.js',
-    import.meta.url,
-  ).pathname
-);
+import { createWallet, exportWallet } from '@open-wallet-standard/core';
+import { mnemonicToAccount } from 'viem/accounts';
 
 const vaultPath = mkdtempSync(join(tmpdir(), 'mw-keygen-'));
 try {
@@ -38,10 +27,10 @@ try {
   console.log(`  Private key: ${privateKeyHex}`);
   console.log('');
   console.log('Run x402 integration test:');
-  console.log(`  RUN_INTEGRATION_TESTS=1 TEST_PRIVATE_KEY=${privateKeyHex} pnpm -F @mindwallet/protocols test`);
+  console.log(`  RUN_INTEGRATION_TESTS=1 TEST_PRIVATE_KEY=${privateKeyHex} bun run --filter @mindwallet/protocols test`);
   console.log('');
   console.log('Run Tempo integration test (also needs Moderato RPC):');
-  console.log(`  RUN_INTEGRATION_TESTS=1 TEST_PRIVATE_KEY=${privateKeyHex} TEMPO_RPC_URL=https://rpc.moderato.tempo.xyz pnpm -F @mindwallet/protocols test`);
+  console.log(`  RUN_INTEGRATION_TESTS=1 TEST_PRIVATE_KEY=${privateKeyHex} TEMPO_RPC_URL=https://rpc.moderato.tempo.xyz bun run --filter @mindwallet/protocols test`);
   console.log('');
 } finally {
   rmSync(vaultPath, { recursive: true, force: true });

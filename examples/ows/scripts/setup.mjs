@@ -78,5 +78,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   console.log(`Vault:  ${result.vaultPath}`);
   console.log(`Config: ${result.configPath}`);
   console.log(`Env:    ${result.envPath}`);
-  console.log(`Run:    pnpm start`);
+  console.log(`Run:    bun run start`);
 }

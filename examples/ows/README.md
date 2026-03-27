@@ -17,26 +17,26 @@ It does not write to your real `~/.config/mindwallet` config or your real OWS va
 Install workspace dependencies first:
 
 ```bash
-pnpm install
+bun install
 ```
 
 Bootstrap the example:
 
 ```bash
 cd examples/ows
-pnpm bootstrap
+bun run bootstrap
 ```
 
 Run the example app:
 
 ```bash
-pnpm start
+bun run start
 ```
 
 Run the example test:
 
 ```bash
-pnpm check
+bun run check
 ```
 
 ## What the app does

@@ -7,7 +7,7 @@ import { createWallet, listWallets } from '@open-wallet-standard/core';
 import { OwsWalletAdapter } from './ows.js';
 
 // Skip entire suite when OWS_PASSPHRASE is not set.
-// Run locally with: OWS_PASSPHRASE=test-passphrase pnpm test src/wallet/ows.integration.test.ts
+// Run locally with: OWS_PASSPHRASE=test-passphrase bun x vitest run src/wallet/ows.integration.test.ts
 const skip = !process.env.OWS_PASSPHRASE;
 
 describe.skipIf(skip)('OwsWalletAdapter — local vault integration', () => {
