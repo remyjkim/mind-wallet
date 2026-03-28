@@ -44,4 +44,6 @@ Thumbs.db
 .docusaurus/
 
 # Internal working docs
-.ai/
+.ai/*
+!.ai/knowledges/
+!.ai/knowledges/**
