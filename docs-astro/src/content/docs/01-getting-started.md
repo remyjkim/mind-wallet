@@ -46,7 +46,7 @@ npm install @mindpass/discovery
 Set your private key and go:
 
 ```bash
-export MINDPASS_PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+export MINDPASS_PRIVATE_KEY=0x_YOUR_PRIVATE_KEY_HERE
 mindpass fetch https://api.example.com/paid-endpoint
 mindpass discover https://api.example.com/paid-endpoint --json
 ```

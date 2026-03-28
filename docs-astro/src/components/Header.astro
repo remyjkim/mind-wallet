@@ -7,15 +7,13 @@ import { SITE } from "@consts";
 <header>
   <Container>
     <div class="flex flex-wrap gap-y-2 justify-between">
-      <Link href="/" underline={false}>
-        <div class="font-semibold">
-          {SITE.NAME}
-        </div>
-      </Link>
+      <a href="/" class="font-semibold text-accent-hover hover:text-accent transition-colors duration-300 ease-in-out">
+        {SITE.NAME}
+      </a>
       <nav class="flex gap-1">
-        <Link href="/docs">
+        <a href="/docs" class="text-accent-hover hover:text-accent underline underline-offset-2 decoration-accent/30 hover:decoration-accent transition-colors duration-300 ease-in-out">
           docs
-        </Link>
+        </a>
       </nav>
     </div>
   </Container>

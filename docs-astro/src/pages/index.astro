@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import { Code } from "astro:components";
 import Container from "@components/Container.astro";
 import PageLayout from "@layouts/PageLayout.astro";
 import ArrowCard from "@components/ArrowCard.astro";
@@ -18,8 +19,8 @@ const packages = allDocs.filter((d) => d.data.order >= 3);
   <Container>
     <div class="space-y-16">
       <section>
-        <h4 class="animate font-semibold text-black">
-          mindpass
+        <h4 class="animate font-semibold text-accent-hover">
+          Mindpass
         </h4>
         <article class="space-y-4">
           <p class="animate">
@@ -35,15 +36,11 @@ const packages = allDocs.filter((d) => d.data.order >= 3);
         <div class="space-y-4">
           <div>
             <div class="text-sm font-semibold text-black/70 mb-1">CLI</div>
-            <pre class="rounded-lg bg-stone-900 text-white/90 p-4 text-sm overflow-x-auto"><code>brew tap remyjkim/mindpass
-brew install mindpass</code></pre>
-            <div class="text-xs text-black/40 mt-1">or <code class="text-xs bg-black/5 px-1 py-0.5 rounded">npm install -g mindpass-cli</code></div>
+            <Code code={`brew tap remyjkim/mindpass\nbrew install mindpass\n# or: npm install -g mindpass-cli`} lang="bash" theme="github-dark" />
           </div>
           <div>
             <div class="text-sm font-semibold text-black/70 mb-1">SDK</div>
-            <pre class="rounded-lg bg-stone-900 text-white/90 p-4 text-sm overflow-x-auto"><code>npm install @mindpass/core        # selection pipeline + wallet
-npm install @mindpass/protocols   # x402, Tempo, SIWX
-npm install @mindpass/discovery   # optional: registry search</code></pre>
+            <Code code={`npm install @mindpass/core        # selection pipeline + wallet\nnpm install @mindpass/protocols   # x402, Tempo, SIWX\nnpm install @mindpass/discovery   # optional: registry search`} lang="bash" theme="github-dark" />
           </div>
         </div>
       </section>
