@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="banner.png" alt="Mindpass" width="100%" />
+</p>
+
 # Mindpass
 
 **Minds that can think but can't buy — until now.**
