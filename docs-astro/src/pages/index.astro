@@ -12,7 +12,9 @@ const allDocs = (await getCollection("docs"))
 
 const gettingStarted = allDocs.find((d) => d.slug === "01-getting-started");
 const guides = allDocs.find((d) => d.slug === "02-guides");
-const packages = allDocs.filter((d) => d.data.order >= 3);
+const cli = allDocs.find((d) => d.slug === "06-cli");
+const mcp = allDocs.find((d) => d.slug === "07-mcp");
+const packages = allDocs.filter((d) => d.data.order >= 5);
 ---
 
 <PageLayout title={HOME.TITLE} description={HOME.DESCRIPTION}>
@@ -24,7 +26,16 @@ const packages = allDocs.filter((d) => d.data.order >= 3);
         </h4>
         <article class="space-y-4">
           <p class="animate">
-            Agent payment SDK for the multi-protocol payment economy. Quickstart guides and tutorials to get you building.
+            Mindpass lets AI agents pay for APIs and authenticate on the web — automatically.
+            When an agent hits a paid or identity-gated endpoint, Mindpass handles protocol selection, signing, and retry so the agent can focus on its task.
+          </p>
+          <p class="animate">
+            Built on the
+            <a href="https://x402.org" target="_blank" rel="noopener noreferrer" class="text-accent-hover hover:underline">x402</a>,
+            <a href="https://mpp.dev/" target="_blank" rel="noopener noreferrer" class="text-accent-hover hover:underline">MPP</a>, and
+            <a href="https://eips.ethereum.org/EIPS/eip-4361" target="_blank" rel="noopener noreferrer" class="text-accent-hover hover:underline">SIWX</a>
+            protocols with wallets managed through the
+            <a href="https://openwallet.sh/" target="_blank" rel="noopener noreferrer" class="text-accent-hover hover:underline">Open Wallet Standard</a>.
           </p>
         </article>
       </section>
@@ -57,7 +68,44 @@ const packages = allDocs.filter((d) => d.data.order >= 3);
               <ArrowCard entry={guides} />
             </li>
           )}
+          {cli && (
+            <li>
+              <ArrowCard entry={cli} />
+            </li>
+          )}
+          {mcp && (
+            <li>
+              <ArrowCard entry={mcp} />
+            </li>
+          )}
         </ul>
+      </section>
+
+      <section class="animate space-y-4">
+        <h5 class="font-semibold text-black">
+          Available Paid APIs
+        </h5>
+        <p class="text-sm text-black/70">
+          Browse live endpoints that accept payments via these protocols.
+        </p>
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="border-b border-black/10">
+              <th class="text-left py-2 font-semibold text-black">Protocol</th>
+              <th class="text-left py-2 font-semibold text-black">Explorer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-black/5">
+              <td class="py-2 text-black/70">MPP / Tempo</td>
+              <td class="py-2"><a href="https://mppscan.com/" target="_blank" rel="noopener noreferrer" class="text-accent-hover hover:underline">mppscan.com</a></td>
+            </tr>
+            <tr class="border-b border-black/5">
+              <td class="py-2 text-black/70">x402</td>
+              <td class="py-2"><a href="https://www.x402scan.com/" target="_blank" rel="noopener noreferrer" class="text-accent-hover hover:underline">x402scan.com</a></td>
+            </tr>
+          </tbody>
+        </table>
       </section>
 
       <section class="animate space-y-4">

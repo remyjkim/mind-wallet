@@ -4,6 +4,6 @@ import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 
 export default defineConfig({
-  site: "https://docs.mindpass.dev",
+  site: "https://mindpass.dev",
   integrations: [mdx(), sitemap(), tailwind()],
 });
