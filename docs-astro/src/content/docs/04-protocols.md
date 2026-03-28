@@ -2,7 +2,7 @@
 title: "@mindpass/protocols"
 description: "Protocol implementations for SIWX, x402, and Tempo."
 date: 2026-03-27
-order: 5
+order: 7
 ---
 
 Concrete `RouterMethod` implementations for each payment protocol.

@@ -2,7 +2,7 @@
 title: "@mindpass/discovery"
 description: "Pre-flight origin probing and registry search."
 date: 2026-03-27
-order: 6
+order: 8
 ---
 
 Pre-flight origin probing and registry search.

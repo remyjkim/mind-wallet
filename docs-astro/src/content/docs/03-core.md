@@ -2,7 +2,7 @@
 title: "@mindpass/core"
 description: "Selection pipeline, wallet interface, state management, and HTTP adapter."
 date: 2026-03-27
-order: 4
+order: 6
 ---
 
 Protocol-agnostic selection pipeline, wallet interface, state management, and HTTP adapter.
