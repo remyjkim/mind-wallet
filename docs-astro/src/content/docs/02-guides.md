@@ -1,5 +1,5 @@
 ---
-title: "Guides"
+title: "Setup Guides"
 description: "Policy rules, private key setup, and environment variables."
 date: 2026-03-27
 order: 2
