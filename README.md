@@ -4,7 +4,9 @@
 
 A new class of minds is emerging: AI agents that reason, plan, and act autonomously. They can synthesize research, write code, and orchestrate complex workflows. But the moment they need to participate in the real economy — buy a dataset, pay for an API call, authenticate with a service — they stall. We gave them intelligence but no economic agency. mindpass changes that.
 
-Today's agent payment landscape is fragmented across competing protocols (x402, MPP/Tempo, SIWX), each with incompatible challenge formats, credential types, and signing requirements. An agent built for one is blind to the others. mindpass is a payment intelligence layer that wraps `fetch()` to automatically detect, evaluate, and resolve these challenges — so your agent can transact across any protocol without knowing or caring which one is behind the door. Protocol detection, candidate scoring, budget enforcement, credential signing, and retry — all invisible. Your agent writes `fetch(url)`. mindpass handles the rest.
+Mindpass lets AI agents pay for APIs and authenticate on the web — automatically. When an agent hits a paid or identity-gated endpoint, Mindpass handles protocol selection, signing, and retry so the agent can focus on its task. Built on the [x402](https://x402.org), [MPP](https://mpp.dev/), and [SIWX](https://eips.ethereum.org/EIPS/eip-4361) protocols with wallets managed through the [Open Wallet Standard](https://openwallet.sh/).
+
+Today's agent payment landscape is fragmented across competing protocols, each with incompatible challenge formats, credential types, and signing requirements. An agent built for one is blind to the others. mindpass is a payment intelligence layer that wraps `fetch()` to automatically detect, evaluate, and resolve these challenges — so your agent can transact across any protocol without knowing or caring which one is behind the door. Protocol detection, candidate scoring, budget enforcement, credential signing, and retry — all invisible. Your agent writes `fetch(url)`. mindpass handles the rest.
 
 ```bash
 # Preferred native install
@@ -34,9 +36,18 @@ mindpass fetch https://paid-api.example.com/data
 
 | Protocol  | What It Does                      | Credential Type                               |
 | ----------- | ----------------------------------- | ----------------------------------------------- |
-| **x402**  | EVM USDC micropayments            | EIP-3009`transferWithAuthorization` signature |
-| **Tempo** | MPP charge and session payments   | Signed EVM transaction (pull or push mode)    |
-| **SIWX**  | Zero-cost identity authentication | Signed SIWE message                           |
+| [**x402**](https://x402.org)  | EVM USDC micropayments            | EIP-3009`transferWithAuthorization` signature |
+| [**Tempo**](https://mpp.dev/) | MPP charge and session payments   | Signed EVM transaction (pull or push mode)    |
+| [**SIWX**](https://eips.ethereum.org/EIPS/eip-4361)  | Zero-cost identity authentication | Signed SIWE message                           |
+
+## Available Paid APIs
+
+Browse live endpoints that accept payments via these protocols:
+
+| Protocol | Explorer |
+|----------|----------|
+| MPP / Tempo | [mppscan.com](https://mppscan.com/) |
+| x402 | [x402scan.com](https://www.x402scan.com/) |
 
 ## Quick Start
 
