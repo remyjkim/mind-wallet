@@ -5,9 +5,13 @@ import PageLayout from "@layouts/PageLayout.astro";
 import ArrowCard from "@components/ArrowCard.astro";
 import { HOME } from "@consts";
 
-const docs = (await getCollection("docs"))
+const allDocs = (await getCollection("docs"))
   .filter((doc) => !doc.data.draft)
   .sort((a, b) => a.data.order - b.data.order);
+
+const gettingStarted = allDocs.find((d) => d.slug === "01-getting-started");
+const guides = allDocs.find((d) => d.slug === "02-guides");
+const packages = allDocs.filter((d) => d.data.order >= 3);
 ---
 
 <PageLayout title={HOME.TITLE} description={HOME.DESCRIPTION}>
@@ -24,12 +28,47 @@ const docs = (await getCollection("docs"))
         </article>
       </section>
 
+      <section class="animate space-y-6">
+        <h5 class="font-semibold text-black">
+          Install
+        </h5>
+        <div class="space-y-4">
+          <div>
+            <div class="text-sm font-semibold text-black/70 mb-1">CLI</div>
+            <pre class="rounded-lg bg-stone-900 text-white/90 p-4 text-sm overflow-x-auto"><code>brew tap remyjkim/mindpass
+brew install mindpass</code></pre>
+            <div class="text-xs text-black/40 mt-1">or <code class="text-xs bg-black/5 px-1 py-0.5 rounded">npm install -g mindpass-cli</code></div>
+          </div>
+          <div>
+            <div class="text-sm font-semibold text-black/70 mb-1">SDK</div>
+            <pre class="rounded-lg bg-stone-900 text-white/90 p-4 text-sm overflow-x-auto"><code>npm install @mindpass/core        # selection pipeline + wallet
+npm install @mindpass/protocols   # x402, Tempo, SIWX
+npm install @mindpass/discovery   # optional: registry search</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="animate space-y-4">
+        <ul class="flex flex-col gap-4">
+          {gettingStarted && (
+            <li>
+              <ArrowCard entry={gettingStarted} />
+            </li>
+          )}
+          {guides && (
+            <li>
+              <ArrowCard entry={guides} />
+            </li>
+          )}
+        </ul>
+      </section>
+
       <section class="animate space-y-4">
         <h5 class="font-semibold text-black">
-          Guides
+          Packages
         </h5>
         <ul class="flex flex-col gap-4">
-          {docs.map((doc) => (
+          {packages.map((doc) => (
             <li>
               <ArrowCard entry={doc} />
             </li>
