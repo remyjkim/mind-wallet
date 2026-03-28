@@ -1,0 +1,77 @@
+---
+import { getCollection } from "astro:content";
+import { Code } from "astro:components";
+import Container from "@components/Container.astro";
+import PageLayout from "@layouts/PageLayout.astro";
+import ArrowCard from "@components/ArrowCard.astro";
+import { HOME } from "@consts";
+
+const allDocs = (await getCollection("docs"))
+  .filter((doc) => !doc.data.draft)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const gettingStarted = allDocs.find((d) => d.slug === "01-getting-started");
+const guides = allDocs.find((d) => d.slug === "02-guides");
+const packages = allDocs.filter((d) => d.data.order >= 3);
+---
+
+<PageLayout title={HOME.TITLE} description={HOME.DESCRIPTION}>
+  <Container>
+    <div class="space-y-16">
+      <section>
+        <h4 class="animate font-semibold text-accent-hover">
+          Mindpass
+        </h4>
+        <article class="space-y-4">
+          <p class="animate">
+            Agent payment SDK for the multi-protocol payment economy. Quickstart guides and tutorials to get you building.
+          </p>
+        </article>
+      </section>
+
+      <section class="animate space-y-6">
+        <h5 class="font-semibold text-black">
+          Install
+        </h5>
+        <div class="space-y-4">
+          <div>
+            <div class="text-sm font-semibold text-black/70 mb-1">CLI</div>
+            <Code code={`brew tap remyjkim/mindpass\nbrew install mindpass\n# or: npm install -g mindpass-cli`} lang="bash" theme="github-dark" />
+          </div>
+          <div>
+            <div class="text-sm font-semibold text-black/70 mb-1">SDK</div>
+            <Code code={`npm install @mindpass/core        # selection pipeline + wallet\nnpm install @mindpass/protocols   # x402, Tempo, SIWX\nnpm install @mindpass/discovery   # optional: registry search`} lang="bash" theme="github-dark" />
+          </div>
+        </div>
+      </section>
+
+      <section class="animate space-y-4">
+        <ul class="flex flex-col gap-4">
+          {gettingStarted && (
+            <li>
+              <ArrowCard entry={gettingStarted} />
+            </li>
+          )}
+          {guides && (
+            <li>
+              <ArrowCard entry={guides} />
+            </li>
+          )}
+        </ul>
+      </section>
+
+      <section class="animate space-y-4">
+        <h5 class="font-semibold text-black">
+          Packages
+        </h5>
+        <ul class="flex flex-col gap-4">
+          {packages.map((doc) => (
+            <li>
+              <ArrowCard entry={doc} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+  </Container>
+</PageLayout>
