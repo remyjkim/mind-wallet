@@ -1,0 +1,41 @@
+---
+import { getCollection } from "astro:content";
+import Container from "@components/Container.astro";
+import PageLayout from "@layouts/PageLayout.astro";
+import ArrowCard from "@components/ArrowCard.astro";
+import { HOME } from "@consts";
+
+const docs = (await getCollection("docs"))
+  .filter((doc) => !doc.data.draft)
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<PageLayout title={HOME.TITLE} description={HOME.DESCRIPTION}>
+  <Container>
+    <div class="space-y-16">
+      <section>
+        <h4 class="animate font-semibold text-black">
+          mindpass
+        </h4>
+        <article class="space-y-4">
+          <p class="animate">
+            Agent payment SDK for the multi-protocol payment economy. Quickstart guides and tutorials to get you building.
+          </p>
+        </article>
+      </section>
+
+      <section class="animate space-y-4">
+        <h5 class="font-semibold text-black">
+          Guides
+        </h5>
+        <ul class="flex flex-col gap-4">
+          {docs.map((doc) => (
+            <li>
+              <ArrowCard entry={doc} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+  </Container>
+</PageLayout>
